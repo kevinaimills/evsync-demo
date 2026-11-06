@@ -1,0 +1,3142 @@
+[
+  {
+    "name": "morning seed",
+    "scenario": "morning",
+    "actions": [],
+    "expected": {
+      "settings": {
+        "now": 480,
+        "scenario": "morning",
+        "job_seq": 3,
+        "event_seq": 7,
+        "durations": {
+          "standard": 18,
+          "enhanced": 28,
+          "specialist": 40
+        }
+      },
+      "rooms": [
+        {
+          "id": "4127",
+          "unit": "Cardiology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4103",
+          "unit": "Cardiology",
+          "status": "cleaning"
+        },
+        {
+          "id": "4112",
+          "unit": "Cardiology",
+          "status": "occupied"
+        },
+        {
+          "id": "4118",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4206",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4210",
+          "unit": "Medicine",
+          "status": "occupied"
+        },
+        {
+          "id": "4302",
+          "unit": "Oncology",
+          "status": "vacant"
+        },
+        {
+          "id": "4315",
+          "unit": "Oncology",
+          "status": "ready"
+        }
+      ],
+      "workers": [
+        {
+          "id": "maya",
+          "name": "Maya Chen",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "sam",
+          "name": "Sam Rivera",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "jordan",
+          "name": "Jordan Ellis",
+          "unit": "Medicine",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "avery",
+          "name": "Avery Patel",
+          "unit": "Oncology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 0
+        }
+      ],
+      "jobs": [
+        {
+          "id": "J001",
+          "room_id": "4103",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "Restock the room after cleaning.",
+          "equipment": "",
+          "status": "cleaning",
+          "worker_id": "sam",
+          "requested_at": 468,
+          "started_at": 472,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 490,
+          "overdue": false
+        },
+        {
+          "id": "J002",
+          "room_id": "4127",
+          "cleaning_class": "enhanced",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask"
+          ],
+          "notes": "Please include the area under the bed.",
+          "equipment": "Retain and clean the reusable stethoscope. Do not discard.",
+          "status": "assigned",
+          "worker_id": "maya",
+          "requested_at": 477,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 28,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 512,
+          "queue_rank": 1,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 512,
+              "fairness": 0,
+              "score": 512
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 522,
+              "fairness": 0,
+              "score": 522
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 28,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 28,
+              "finish": 518,
+              "fairness": 0,
+              "score": 518
+            }
+          ],
+          "estimated_start": 484,
+          "breakdown": {
+            "wait": 0,
+            "travel": 2,
+            "prep": 2,
+            "clean": 28
+          },
+          "explanation": "Maya Chen has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J003",
+          "room_id": "4206",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "jordan",
+          "requested_at": 479,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 502,
+          "queue_rank": 2,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 32,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 537,
+              "fairness": 2,
+              "score": 539
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 502,
+              "fairness": 0,
+              "score": 502
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 505,
+              "fairness": 0,
+              "score": 505
+            }
+          ],
+          "estimated_start": 484,
+          "breakdown": {
+            "wait": 0,
+            "travel": 2,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Jordan Ellis has the lowest completion + workload score among eligible workers."
+        }
+      ],
+      "events": [
+        {
+          "id": 7,
+          "at": 480,
+          "kind": "scenario",
+          "message": "A typical morning loaded",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 6,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Jordan Ellis",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 5,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4127 → Maya Chen",
+          "job_id": "J002",
+          "actor": "System"
+        },
+        {
+          "id": 4,
+          "at": 479,
+          "kind": "request",
+          "message": "Room 4206 · Standard cleaning requested",
+          "job_id": "J003",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 3,
+          "at": 477,
+          "kind": "request",
+          "message": "Room 4127 · Enhanced cleaning requested",
+          "job_id": "J002",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 2,
+          "at": 472,
+          "kind": "start",
+          "message": "Sam Rivera started Room 4103",
+          "job_id": "J001",
+          "actor": "Sam Rivera"
+        },
+        {
+          "id": 1,
+          "at": 468,
+          "kind": "request",
+          "message": "Room 4103 · Standard cleaning requested",
+          "job_id": "J001",
+          "actor": "Nurse Nina"
+        }
+      ],
+      "classes": {
+        "standard": {
+          "label": "Standard",
+          "minutes": 18,
+          "description": "A routine room turnover"
+        },
+        "enhanced": {
+          "label": "Enhanced",
+          "minutes": 28,
+          "description": "Additional cleaning requirements"
+        },
+        "specialist": {
+          "label": "Specialist",
+          "minutes": 40,
+          "description": "A task needing specialist coverage"
+        }
+      },
+      "ppe_options": [
+        "Gloves",
+        "Gown",
+        "Medical mask",
+        "Eye protection",
+        "Respirator"
+      ],
+      "metrics": {
+        "waiting": 2,
+        "cleaning": 1,
+        "blocked": 0,
+        "ready": 2,
+        "completed": 0,
+        "mean_turnaround": null
+      }
+    }
+  },
+  {
+    "name": "rush seed",
+    "scenario": "rush",
+    "actions": [],
+    "expected": {
+      "settings": {
+        "now": 480,
+        "scenario": "rush",
+        "job_seq": 6,
+        "event_seq": 13,
+        "durations": {
+          "standard": 18,
+          "enhanced": 28,
+          "specialist": 40
+        }
+      },
+      "rooms": [
+        {
+          "id": "4127",
+          "unit": "Cardiology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4103",
+          "unit": "Cardiology",
+          "status": "cleaning"
+        },
+        {
+          "id": "4112",
+          "unit": "Cardiology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4118",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4206",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4210",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4302",
+          "unit": "Oncology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4315",
+          "unit": "Oncology",
+          "status": "ready"
+        }
+      ],
+      "workers": [
+        {
+          "id": "maya",
+          "name": "Maya Chen",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "sam",
+          "name": "Sam Rivera",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "jordan",
+          "name": "Jordan Ellis",
+          "unit": "Medicine",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "avery",
+          "name": "Avery Patel",
+          "unit": "Oncology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 0
+        }
+      ],
+      "jobs": [
+        {
+          "id": "J001",
+          "room_id": "4103",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "Restock the room after cleaning.",
+          "equipment": "",
+          "status": "cleaning",
+          "worker_id": "sam",
+          "requested_at": 468,
+          "started_at": 472,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 490,
+          "overdue": false
+        },
+        {
+          "id": "J002",
+          "room_id": "4127",
+          "cleaning_class": "enhanced",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask"
+          ],
+          "notes": "Please include the area under the bed.",
+          "equipment": "Retain and clean the reusable stethoscope. Do not discard.",
+          "status": "assigned",
+          "worker_id": "maya",
+          "requested_at": 477,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 28,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 512,
+          "queue_rank": 1,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 512,
+              "fairness": 0,
+              "score": 512
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 522,
+              "fairness": 0,
+              "score": 522
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 28,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 28,
+              "finish": 518,
+              "fairness": 0,
+              "score": 518
+            }
+          ],
+          "estimated_start": 484,
+          "breakdown": {
+            "wait": 0,
+            "travel": 2,
+            "prep": 2,
+            "clean": 28
+          },
+          "explanation": "Maya Chen has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J003",
+          "room_id": "4206",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "sam",
+          "requested_at": 479,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 515,
+          "queue_rank": 4,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 32,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 537,
+              "fairness": 2,
+              "score": 539
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 25,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 530,
+              "fairness": 2,
+              "score": 532
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 25,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 527,
+              "fairness": 2,
+              "score": 529
+            }
+          ],
+          "estimated_start": 497,
+          "breakdown": {
+            "wait": 10,
+            "travel": 5,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Sam Rivera has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J004",
+          "room_id": "4112",
+          "cleaning_class": "standard",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "jordan",
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 505,
+          "queue_rank": 2,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 32,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 534,
+              "fairness": 2,
+              "score": 536
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 512,
+              "fairness": 0,
+              "score": 512
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 505,
+              "fairness": 0,
+              "score": 505
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 18,
+              "finish": 508,
+              "fairness": 0,
+              "score": 508
+            }
+          ],
+          "estimated_start": 487,
+          "breakdown": {
+            "wait": 0,
+            "travel": 5,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Jordan Ellis has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J005",
+          "room_id": "4210",
+          "cleaning_class": "standard",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "avery",
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 505,
+          "queue_rank": 3,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 32,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 537,
+              "fairness": 2,
+              "score": 539
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 25,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 530,
+              "fairness": 2,
+              "score": 532
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 505,
+              "fairness": 0,
+              "score": 505
+            }
+          ],
+          "estimated_start": 487,
+          "breakdown": {
+            "wait": 0,
+            "travel": 5,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Avery Patel has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J006",
+          "room_id": "4302",
+          "cleaning_class": "specialist",
+          "priority": "routine",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Respirator"
+          ],
+          "notes": "",
+          "equipment": "Retain reusable equipment on the cart.",
+          "status": "assigned",
+          "worker_id": "avery",
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 40,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 554,
+          "queue_rank": 5,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 32,
+              "travel": 8,
+              "prep": 4,
+              "clean": 40,
+              "finish": 564,
+              "fairness": 2,
+              "score": 566
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": false,
+              "reasons": [
+                "Cleaning class not covered",
+                "Required PPE capability unavailable"
+              ],
+              "wait": 35,
+              "travel": 5,
+              "prep": 4,
+              "clean": 40,
+              "finish": null,
+              "fairness": 2,
+              "score": null
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": false,
+              "reasons": [
+                "Cleaning class not covered",
+                "Required PPE capability unavailable"
+              ],
+              "wait": 25,
+              "travel": 8,
+              "prep": 4,
+              "clean": 40,
+              "finish": null,
+              "fairness": 2,
+              "score": null
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 25,
+              "travel": 5,
+              "prep": 4,
+              "clean": 40,
+              "finish": 554,
+              "fairness": 2,
+              "score": 556
+            }
+          ],
+          "estimated_start": 514,
+          "breakdown": {
+            "wait": 25,
+            "travel": 5,
+            "prep": 4,
+            "clean": 40
+          },
+          "explanation": "Avery Patel has the lowest completion + workload score among eligible workers."
+        }
+      ],
+      "events": [
+        {
+          "id": 13,
+          "at": 480,
+          "kind": "scenario",
+          "message": "Discharge rush loaded",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 12,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4302 → Avery Patel",
+          "job_id": "J006",
+          "actor": "System"
+        },
+        {
+          "id": 11,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Sam Rivera",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 10,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4210 → Avery Patel",
+          "job_id": "J005",
+          "actor": "System"
+        },
+        {
+          "id": 9,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4112 → Jordan Ellis",
+          "job_id": "J004",
+          "actor": "System"
+        },
+        {
+          "id": 8,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4127 → Maya Chen",
+          "job_id": "J002",
+          "actor": "System"
+        },
+        {
+          "id": 7,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4302 · Specialist cleaning requested",
+          "job_id": "J006",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 6,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4210 · Standard cleaning requested",
+          "job_id": "J005",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 5,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4112 · Standard cleaning requested",
+          "job_id": "J004",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 4,
+          "at": 479,
+          "kind": "request",
+          "message": "Room 4206 · Standard cleaning requested",
+          "job_id": "J003",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 3,
+          "at": 477,
+          "kind": "request",
+          "message": "Room 4127 · Enhanced cleaning requested",
+          "job_id": "J002",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 2,
+          "at": 472,
+          "kind": "start",
+          "message": "Sam Rivera started Room 4103",
+          "job_id": "J001",
+          "actor": "Sam Rivera"
+        },
+        {
+          "id": 1,
+          "at": 468,
+          "kind": "request",
+          "message": "Room 4103 · Standard cleaning requested",
+          "job_id": "J001",
+          "actor": "Nurse Nina"
+        }
+      ],
+      "classes": {
+        "standard": {
+          "label": "Standard",
+          "minutes": 18,
+          "description": "A routine room turnover"
+        },
+        "enhanced": {
+          "label": "Enhanced",
+          "minutes": 28,
+          "description": "Additional cleaning requirements"
+        },
+        "specialist": {
+          "label": "Specialist",
+          "minutes": 40,
+          "description": "A task needing specialist coverage"
+        }
+      },
+      "ppe_options": [
+        "Gloves",
+        "Gown",
+        "Medical mask",
+        "Eye protection",
+        "Respirator"
+      ],
+      "metrics": {
+        "waiting": 5,
+        "cleaning": 1,
+        "blocked": 0,
+        "ready": 2,
+        "completed": 0,
+        "mean_turnaround": null
+      }
+    }
+  },
+  {
+    "name": "coverage seed",
+    "scenario": "coverage",
+    "actions": [],
+    "expected": {
+      "settings": {
+        "now": 480,
+        "scenario": "coverage",
+        "job_seq": 6,
+        "event_seq": 12,
+        "durations": {
+          "standard": 18,
+          "enhanced": 28,
+          "specialist": 40
+        }
+      },
+      "rooms": [
+        {
+          "id": "4127",
+          "unit": "Cardiology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4103",
+          "unit": "Cardiology",
+          "status": "cleaning"
+        },
+        {
+          "id": "4112",
+          "unit": "Cardiology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4118",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4206",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4210",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4302",
+          "unit": "Oncology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4315",
+          "unit": "Oncology",
+          "status": "ready"
+        }
+      ],
+      "workers": [
+        {
+          "id": "maya",
+          "name": "Maya Chen",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": false,
+          "completed": 0
+        },
+        {
+          "id": "sam",
+          "name": "Sam Rivera",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "jordan",
+          "name": "Jordan Ellis",
+          "unit": "Medicine",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "avery",
+          "name": "Avery Patel",
+          "unit": "Oncology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": false,
+          "completed": 0
+        }
+      ],
+      "jobs": [
+        {
+          "id": "J001",
+          "room_id": "4103",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "Restock the room after cleaning.",
+          "equipment": "",
+          "status": "cleaning",
+          "worker_id": "sam",
+          "requested_at": 468,
+          "started_at": 472,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 490,
+          "overdue": false
+        },
+        {
+          "id": "J002",
+          "room_id": "4127",
+          "cleaning_class": "enhanced",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask"
+          ],
+          "notes": "Please include the area under the bed.",
+          "equipment": "Retain and clean the reusable stethoscope. Do not discard.",
+          "status": "assigned",
+          "worker_id": "jordan",
+          "requested_at": 477,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 28,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 515,
+          "queue_rank": 1,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 522,
+              "fairness": 0,
+              "score": 522
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 28,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 28,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            }
+          ],
+          "estimated_start": 487,
+          "breakdown": {
+            "wait": 0,
+            "travel": 5,
+            "prep": 2,
+            "clean": 28
+          },
+          "explanation": "Jordan Ellis has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J003",
+          "room_id": "4206",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "jordan",
+          "requested_at": 479,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 540,
+          "queue_rank": 4,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 57,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 559,
+              "fairness": 4,
+              "score": 563
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 35,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 540,
+              "fairness": 2,
+              "score": 542
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            }
+          ],
+          "estimated_start": 522,
+          "breakdown": {
+            "wait": 35,
+            "travel": 5,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Jordan Ellis has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J004",
+          "room_id": "4112",
+          "cleaning_class": "standard",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "sam",
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 512,
+          "queue_rank": 2,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 512,
+              "fairness": 0,
+              "score": 512
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 35,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 537,
+              "fairness": 2,
+              "score": 539
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 18,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            }
+          ],
+          "estimated_start": 494,
+          "breakdown": {
+            "wait": 10,
+            "travel": 2,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Sam Rivera has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J005",
+          "room_id": "4210",
+          "cleaning_class": "standard",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "sam",
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 537,
+          "queue_rank": 3,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 32,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 537,
+              "fairness": 2,
+              "score": 539
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 35,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 540,
+              "fairness": 2,
+              "score": 542
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            }
+          ],
+          "estimated_start": 519,
+          "breakdown": {
+            "wait": 32,
+            "travel": 5,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Sam Rivera has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J006",
+          "room_id": "4302",
+          "cleaning_class": "specialist",
+          "priority": "routine",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Respirator"
+          ],
+          "notes": "",
+          "equipment": "Retain reusable equipment on the cart.",
+          "status": "queued",
+          "worker_id": null,
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 40,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": null,
+          "queue_rank": 5,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 8,
+              "prep": 4,
+              "clean": 40,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": false,
+              "reasons": [
+                "Cleaning class not covered",
+                "Required PPE capability unavailable"
+              ],
+              "wait": 57,
+              "travel": 5,
+              "prep": 4,
+              "clean": 40,
+              "finish": null,
+              "fairness": 4,
+              "score": null
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": false,
+              "reasons": [
+                "Cleaning class not covered",
+                "Required PPE capability unavailable"
+              ],
+              "wait": 60,
+              "travel": 5,
+              "prep": 4,
+              "clean": 40,
+              "finish": null,
+              "fairness": 4,
+              "score": null
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 2,
+              "prep": 4,
+              "clean": 40,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            }
+          ],
+          "estimated_start": null,
+          "breakdown": null,
+          "explanation": "Waiting for an available worker with the required coverage."
+        }
+      ],
+      "events": [
+        {
+          "id": 12,
+          "at": 480,
+          "kind": "scenario",
+          "message": "Limited PPE coverage loaded",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 11,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Jordan Ellis",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 10,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4210 → Sam Rivera",
+          "job_id": "J005",
+          "actor": "System"
+        },
+        {
+          "id": 9,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4112 → Sam Rivera",
+          "job_id": "J004",
+          "actor": "System"
+        },
+        {
+          "id": 8,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4127 → Jordan Ellis",
+          "job_id": "J002",
+          "actor": "System"
+        },
+        {
+          "id": 7,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4302 · Specialist cleaning requested",
+          "job_id": "J006",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 6,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4210 · Standard cleaning requested",
+          "job_id": "J005",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 5,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4112 · Standard cleaning requested",
+          "job_id": "J004",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 4,
+          "at": 479,
+          "kind": "request",
+          "message": "Room 4206 · Standard cleaning requested",
+          "job_id": "J003",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 3,
+          "at": 477,
+          "kind": "request",
+          "message": "Room 4127 · Enhanced cleaning requested",
+          "job_id": "J002",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 2,
+          "at": 472,
+          "kind": "start",
+          "message": "Sam Rivera started Room 4103",
+          "job_id": "J001",
+          "actor": "Sam Rivera"
+        },
+        {
+          "id": 1,
+          "at": 468,
+          "kind": "request",
+          "message": "Room 4103 · Standard cleaning requested",
+          "job_id": "J001",
+          "actor": "Nurse Nina"
+        }
+      ],
+      "classes": {
+        "standard": {
+          "label": "Standard",
+          "minutes": 18,
+          "description": "A routine room turnover"
+        },
+        "enhanced": {
+          "label": "Enhanced",
+          "minutes": 28,
+          "description": "Additional cleaning requirements"
+        },
+        "specialist": {
+          "label": "Specialist",
+          "minutes": 40,
+          "description": "A task needing specialist coverage"
+        }
+      },
+      "ppe_options": [
+        "Gloves",
+        "Gown",
+        "Medical mask",
+        "Eye protection",
+        "Respirator"
+      ],
+      "metrics": {
+        "waiting": 5,
+        "cleaning": 1,
+        "blocked": 0,
+        "ready": 2,
+        "completed": 0,
+        "mean_turnaround": null
+      }
+    }
+  },
+  {
+    "name": "complete handoff",
+    "scenario": "morning",
+    "actions": [
+      {
+        "action": "start",
+        "data": {
+          "job_id": "J002",
+          "worker_id": "maya",
+          "ppe_confirmed": true
+        }
+      },
+      {
+        "action": "advance",
+        "data": {
+          "minutes": 5
+        }
+      },
+      {
+        "action": "block",
+        "data": {
+          "job_id": "J002",
+          "worker_id": "maya",
+          "reason": "PPE unavailable"
+        }
+      },
+      {
+        "action": "advance",
+        "data": {
+          "minutes": 15
+        }
+      },
+      {
+        "action": "resume",
+        "data": {
+          "job_id": "J002",
+          "worker_id": "maya"
+        }
+      },
+      {
+        "action": "advance",
+        "data": {
+          "minutes": 23
+        }
+      },
+      {
+        "action": "complete",
+        "data": {
+          "job_id": "J002",
+          "worker_id": "maya",
+          "checks_confirmed": true
+        }
+      },
+      {
+        "action": "complete",
+        "data": {
+          "job_id": "J001",
+          "worker_id": "sam",
+          "checks_confirmed": true
+        }
+      }
+    ],
+    "expected": {
+      "settings": {
+        "now": 523,
+        "scenario": "morning",
+        "job_seq": 3,
+        "event_seq": 15,
+        "durations": {
+          "standard": 18,
+          "enhanced": 28,
+          "specialist": 40
+        }
+      },
+      "rooms": [
+        {
+          "id": "4127",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4103",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4112",
+          "unit": "Cardiology",
+          "status": "occupied"
+        },
+        {
+          "id": "4118",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4206",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4210",
+          "unit": "Medicine",
+          "status": "occupied"
+        },
+        {
+          "id": "4302",
+          "unit": "Oncology",
+          "status": "vacant"
+        },
+        {
+          "id": "4315",
+          "unit": "Oncology",
+          "status": "ready"
+        }
+      ],
+      "workers": [
+        {
+          "id": "maya",
+          "name": "Maya Chen",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 1
+        },
+        {
+          "id": "sam",
+          "name": "Sam Rivera",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 1
+        },
+        {
+          "id": "jordan",
+          "name": "Jordan Ellis",
+          "unit": "Medicine",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "avery",
+          "name": "Avery Patel",
+          "unit": "Oncology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 0
+        }
+      ],
+      "jobs": [
+        {
+          "id": "J001",
+          "room_id": "4103",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "Restock the room after cleaning.",
+          "equipment": "",
+          "status": "complete",
+          "worker_id": "sam",
+          "requested_at": 468,
+          "started_at": 472,
+          "completed_at": 523,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 523,
+          "overdue": true
+        },
+        {
+          "id": "J002",
+          "room_id": "4127",
+          "cleaning_class": "enhanced",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask"
+          ],
+          "notes": "Please include the area under the bed.",
+          "equipment": "Retain and clean the reusable stethoscope. Do not discard.",
+          "status": "complete",
+          "worker_id": "maya",
+          "requested_at": 477,
+          "started_at": 480,
+          "completed_at": 523,
+          "duration": 28,
+          "blocked_at": null,
+          "blocked_minutes": 15,
+          "block_reason": null,
+          "estimated_finish": 523,
+          "queue_rank": 1,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 512,
+              "fairness": 0,
+              "score": 512
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 10,
+              "travel": 2,
+              "prep": 2,
+              "clean": 28,
+              "finish": 522,
+              "fairness": 0,
+              "score": 522
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 28,
+              "finish": 515,
+              "fairness": 0,
+              "score": 515
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 28,
+              "finish": 518,
+              "fairness": 0,
+              "score": 518
+            }
+          ],
+          "estimated_start": 484,
+          "breakdown": {
+            "wait": 0,
+            "travel": 2,
+            "prep": 2,
+            "clean": 28
+          },
+          "explanation": "Maya Chen has the lowest completion + workload score among eligible workers.",
+          "overdue": true
+        },
+        {
+          "id": "J003",
+          "room_id": "4206",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "jordan",
+          "requested_at": 479,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 545,
+          "queue_rank": 1,
+          "aged": true,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 548,
+              "fairness": 2,
+              "score": 550
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 548,
+              "fairness": 2,
+              "score": 550
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 18,
+              "finish": 545,
+              "fairness": 0,
+              "score": 545
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 18,
+              "finish": 548,
+              "fairness": 0,
+              "score": 548
+            }
+          ],
+          "estimated_start": 527,
+          "breakdown": {
+            "wait": 0,
+            "travel": 2,
+            "prep": 2,
+            "clean": 18
+          },
+          "explanation": "Jordan Ellis has the lowest completion + workload score among eligible workers."
+        }
+      ],
+      "events": [
+        {
+          "id": 15,
+          "at": 523,
+          "kind": "complete",
+          "message": "Room 4103 is ready · completion confirmed",
+          "job_id": "J001",
+          "actor": "Sam Rivera"
+        },
+        {
+          "id": 14,
+          "at": 523,
+          "kind": "complete",
+          "message": "Room 4127 is ready · completion confirmed",
+          "job_id": "J002",
+          "actor": "Maya Chen"
+        },
+        {
+          "id": 13,
+          "at": 523,
+          "kind": "clock",
+          "message": "Simulation advanced 23 minutes",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 12,
+          "at": 500,
+          "kind": "resume",
+          "message": "Room 4127 resumed after 15 min pause",
+          "job_id": "J002",
+          "actor": "Maya Chen"
+        },
+        {
+          "id": 11,
+          "at": 500,
+          "kind": "clock",
+          "message": "Simulation advanced 15 minutes",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 10,
+          "at": 485,
+          "kind": "blocked",
+          "message": "Room 4127 paused: PPE unavailable",
+          "job_id": "J002",
+          "actor": "Maya Chen"
+        },
+        {
+          "id": 9,
+          "at": 485,
+          "kind": "clock",
+          "message": "Simulation advanced 5 minutes",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 8,
+          "at": 480,
+          "kind": "start",
+          "message": "Maya Chen started Room 4127 · PPE confirmed",
+          "job_id": "J002",
+          "actor": "Maya Chen"
+        },
+        {
+          "id": 7,
+          "at": 480,
+          "kind": "scenario",
+          "message": "A typical morning loaded",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 6,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Jordan Ellis",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 5,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4127 → Maya Chen",
+          "job_id": "J002",
+          "actor": "System"
+        },
+        {
+          "id": 4,
+          "at": 479,
+          "kind": "request",
+          "message": "Room 4206 · Standard cleaning requested",
+          "job_id": "J003",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 3,
+          "at": 477,
+          "kind": "request",
+          "message": "Room 4127 · Enhanced cleaning requested",
+          "job_id": "J002",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 2,
+          "at": 472,
+          "kind": "start",
+          "message": "Sam Rivera started Room 4103",
+          "job_id": "J001",
+          "actor": "Sam Rivera"
+        },
+        {
+          "id": 1,
+          "at": 468,
+          "kind": "request",
+          "message": "Room 4103 · Standard cleaning requested",
+          "job_id": "J001",
+          "actor": "Nurse Nina"
+        }
+      ],
+      "classes": {
+        "standard": {
+          "label": "Standard",
+          "minutes": 18,
+          "description": "A routine room turnover"
+        },
+        "enhanced": {
+          "label": "Enhanced",
+          "minutes": 28,
+          "description": "Additional cleaning requirements"
+        },
+        "specialist": {
+          "label": "Specialist",
+          "minutes": 40,
+          "description": "A task needing specialist coverage"
+        }
+      },
+      "ppe_options": [
+        "Gloves",
+        "Gown",
+        "Medical mask",
+        "Eye protection",
+        "Respirator"
+      ],
+      "metrics": {
+        "waiting": 1,
+        "cleaning": 0,
+        "blocked": 0,
+        "ready": 4,
+        "completed": 2,
+        "mean_turnaround": 50.5
+      }
+    }
+  },
+  {
+    "name": "reassignment and constraints",
+    "scenario": "morning",
+    "actions": [
+      {
+        "action": "request",
+        "data": {
+          "room_id": "4302",
+          "vacant": true,
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Respirator"
+          ],
+          "cleaning_class": "specialist",
+          "priority": "urgent",
+          "equipment": "Retain reusable equipment."
+        }
+      },
+      {
+        "action": "worker",
+        "data": {
+          "worker_id": "avery",
+          "accepting": false
+        }
+      },
+      {
+        "action": "worker",
+        "data": {
+          "worker_id": "maya",
+          "accepting": false
+        }
+      },
+      {
+        "action": "worker",
+        "data": {
+          "worker_id": "avery",
+          "accepting": true
+        }
+      },
+      {
+        "action": "durations",
+        "data": {
+          "durations": {
+            "standard": 25,
+            "enhanced": 35,
+            "specialist": 60
+          }
+        }
+      },
+      {
+        "action": "cancel",
+        "data": {
+          "job_id": "J004"
+        }
+      },
+      {
+        "action": "priority",
+        "data": {
+          "job_id": "J003"
+        }
+      },
+      {
+        "action": "advance",
+        "data": {
+          "minutes": 30
+        }
+      }
+    ],
+    "expected": {
+      "settings": {
+        "now": 510,
+        "scenario": "morning",
+        "job_seq": 4,
+        "event_seq": 22,
+        "durations": {
+          "standard": 25,
+          "enhanced": 35,
+          "specialist": 60
+        }
+      },
+      "rooms": [
+        {
+          "id": "4127",
+          "unit": "Cardiology",
+          "status": "awaiting"
+        },
+        {
+          "id": "4103",
+          "unit": "Cardiology",
+          "status": "cleaning"
+        },
+        {
+          "id": "4112",
+          "unit": "Cardiology",
+          "status": "occupied"
+        },
+        {
+          "id": "4118",
+          "unit": "Cardiology",
+          "status": "ready"
+        },
+        {
+          "id": "4206",
+          "unit": "Medicine",
+          "status": "awaiting"
+        },
+        {
+          "id": "4210",
+          "unit": "Medicine",
+          "status": "occupied"
+        },
+        {
+          "id": "4302",
+          "unit": "Oncology",
+          "status": "vacant"
+        },
+        {
+          "id": "4315",
+          "unit": "Oncology",
+          "status": "ready"
+        }
+      ],
+      "workers": [
+        {
+          "id": "maya",
+          "name": "Maya Chen",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": false,
+          "completed": 0
+        },
+        {
+          "id": "sam",
+          "name": "Sam Rivera",
+          "unit": "Cardiology",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "jordan",
+          "name": "Jordan Ellis",
+          "unit": "Medicine",
+          "classes": [
+            "standard",
+            "enhanced"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection"
+          ],
+          "accepting": true,
+          "completed": 0
+        },
+        {
+          "id": "avery",
+          "name": "Avery Patel",
+          "unit": "Oncology",
+          "classes": [
+            "standard",
+            "enhanced",
+            "specialist"
+          ],
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask",
+            "Eye protection",
+            "Respirator"
+          ],
+          "accepting": true,
+          "completed": 0
+        }
+      ],
+      "jobs": [
+        {
+          "id": "J001",
+          "room_id": "4103",
+          "cleaning_class": "standard",
+          "priority": "routine",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "Restock the room after cleaning.",
+          "equipment": "",
+          "status": "cleaning",
+          "worker_id": "sam",
+          "requested_at": 468,
+          "started_at": 472,
+          "completed_at": null,
+          "duration": 18,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 515,
+          "overdue": true
+        },
+        {
+          "id": "J002",
+          "room_id": "4127",
+          "cleaning_class": "enhanced",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Medical mask"
+          ],
+          "notes": "Please include the area under the bed.",
+          "equipment": "Retain and clean the reusable stethoscope. Do not discard.",
+          "status": "assigned",
+          "worker_id": "jordan",
+          "requested_at": 477,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 35,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 552,
+          "queue_rank": 1,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 2,
+              "prep": 2,
+              "clean": 35,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 5,
+              "travel": 2,
+              "prep": 2,
+              "clean": 35,
+              "finish": 554,
+              "fairness": 0,
+              "score": 554
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 35,
+              "finish": 552,
+              "fairness": 0,
+              "score": 552
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 8,
+              "prep": 2,
+              "clean": 35,
+              "finish": 555,
+              "fairness": 0,
+              "score": 555
+            }
+          ],
+          "estimated_start": 517,
+          "breakdown": {
+            "wait": 0,
+            "travel": 5,
+            "prep": 2,
+            "clean": 35
+          },
+          "explanation": "Jordan Ellis has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J003",
+          "room_id": "4206",
+          "cleaning_class": "standard",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves"
+          ],
+          "notes": "",
+          "equipment": "",
+          "status": "assigned",
+          "worker_id": "avery",
+          "requested_at": 479,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 25,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": 542,
+          "queue_rank": 2,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 25,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": true,
+              "reasons": [],
+              "wait": 5,
+              "travel": 5,
+              "prep": 2,
+              "clean": 25,
+              "finish": 547,
+              "fairness": 0,
+              "score": 547
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": true,
+              "reasons": [],
+              "wait": 42,
+              "travel": 5,
+              "prep": 2,
+              "clean": 25,
+              "finish": 584,
+              "fairness": 2,
+              "score": 586
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 5,
+              "prep": 2,
+              "clean": 25,
+              "finish": 542,
+              "fairness": 0,
+              "score": 542
+            }
+          ],
+          "estimated_start": 517,
+          "breakdown": {
+            "wait": 0,
+            "travel": 5,
+            "prep": 2,
+            "clean": 25
+          },
+          "explanation": "Avery Patel has the lowest completion + workload score among eligible workers."
+        },
+        {
+          "id": "J004",
+          "room_id": "4302",
+          "cleaning_class": "specialist",
+          "priority": "urgent",
+          "ppe": [
+            "Gloves",
+            "Gown",
+            "Respirator"
+          ],
+          "notes": "",
+          "equipment": "Retain reusable equipment.",
+          "status": "cancelled",
+          "worker_id": "avery",
+          "requested_at": 480,
+          "started_at": null,
+          "completed_at": null,
+          "duration": 60,
+          "blocked_at": null,
+          "blocked_minutes": 0,
+          "block_reason": null,
+          "estimated_finish": null,
+          "queue_rank": 2,
+          "aged": false,
+          "candidates": [
+            {
+              "worker_id": "maya",
+              "name": "Maya Chen",
+              "eligible": false,
+              "reasons": [
+                "Not accepting new tasks"
+              ],
+              "wait": 0,
+              "travel": 8,
+              "prep": 4,
+              "clean": 60,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "sam",
+              "name": "Sam Rivera",
+              "eligible": false,
+              "reasons": [
+                "Cleaning class not covered",
+                "Required PPE capability unavailable"
+              ],
+              "wait": 10,
+              "travel": 8,
+              "prep": 4,
+              "clean": 60,
+              "finish": null,
+              "fairness": 0,
+              "score": null
+            },
+            {
+              "worker_id": "jordan",
+              "name": "Jordan Ellis",
+              "eligible": false,
+              "reasons": [
+                "Cleaning class not covered",
+                "Required PPE capability unavailable"
+              ],
+              "wait": 42,
+              "travel": 8,
+              "prep": 4,
+              "clean": 60,
+              "finish": null,
+              "fairness": 2,
+              "score": null
+            },
+            {
+              "worker_id": "avery",
+              "name": "Avery Patel",
+              "eligible": true,
+              "reasons": [],
+              "wait": 0,
+              "travel": 2,
+              "prep": 4,
+              "clean": 60,
+              "finish": 546,
+              "fairness": 0,
+              "score": 546
+            }
+          ],
+          "estimated_start": 486,
+          "breakdown": {
+            "wait": 0,
+            "travel": 2,
+            "prep": 4,
+            "clean": 60
+          },
+          "explanation": "Avery Patel has the lowest completion + workload score among eligible workers."
+        }
+      ],
+      "events": [
+        {
+          "id": 22,
+          "at": 510,
+          "kind": "clock",
+          "message": "Simulation advanced 30 minutes",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 21,
+          "at": 480,
+          "kind": "priority",
+          "message": "Room 4206 priority changed to urgent",
+          "job_id": "J003",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 20,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Avery Patel",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 19,
+          "at": 480,
+          "kind": "cancel",
+          "message": "Request for Room 4302 cancelled",
+          "job_id": "J004",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 18,
+          "at": 480,
+          "kind": "model",
+          "message": "Demo duration assumptions updated for unstarted jobs",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 17,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4302 → Avery Patel",
+          "job_id": "J004",
+          "actor": "System"
+        },
+        {
+          "id": 16,
+          "at": 480,
+          "kind": "availability",
+          "message": "Avery Patel accepting tasks",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 15,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Sam Rivera",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 14,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4302 → awaiting coverage",
+          "job_id": "J004",
+          "actor": "System"
+        },
+        {
+          "id": 13,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4127 → Jordan Ellis",
+          "job_id": "J002",
+          "actor": "System"
+        },
+        {
+          "id": 12,
+          "at": 480,
+          "kind": "availability",
+          "message": "Maya Chen unavailable for new tasks",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 11,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4302 → Maya Chen",
+          "job_id": "J004",
+          "actor": "System"
+        },
+        {
+          "id": 10,
+          "at": 480,
+          "kind": "availability",
+          "message": "Avery Patel unavailable for new tasks",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 9,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4302 → Avery Patel",
+          "job_id": "J004",
+          "actor": "System"
+        },
+        {
+          "id": 8,
+          "at": 480,
+          "kind": "request",
+          "message": "Room 4302 · Specialist cleaning requested",
+          "job_id": "J004",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 7,
+          "at": 480,
+          "kind": "scenario",
+          "message": "A typical morning loaded",
+          "job_id": null,
+          "actor": "Demo controls"
+        },
+        {
+          "id": 6,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4206 → Jordan Ellis",
+          "job_id": "J003",
+          "actor": "System"
+        },
+        {
+          "id": 5,
+          "at": 480,
+          "kind": "assignment",
+          "message": "Room 4127 → Maya Chen",
+          "job_id": "J002",
+          "actor": "System"
+        },
+        {
+          "id": 4,
+          "at": 479,
+          "kind": "request",
+          "message": "Room 4206 · Standard cleaning requested",
+          "job_id": "J003",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 3,
+          "at": 477,
+          "kind": "request",
+          "message": "Room 4127 · Enhanced cleaning requested",
+          "job_id": "J002",
+          "actor": "Nurse Nina"
+        },
+        {
+          "id": 2,
+          "at": 472,
+          "kind": "start",
+          "message": "Sam Rivera started Room 4103",
+          "job_id": "J001",
+          "actor": "Sam Rivera"
+        },
+        {
+          "id": 1,
+          "at": 468,
+          "kind": "request",
+          "message": "Room 4103 · Standard cleaning requested",
+          "job_id": "J001",
+          "actor": "Nurse Nina"
+        }
+      ],
+      "classes": {
+        "standard": {
+          "label": "Standard",
+          "minutes": 18,
+          "description": "A routine room turnover"
+        },
+        "enhanced": {
+          "label": "Enhanced",
+          "minutes": 28,
+          "description": "Additional cleaning requirements"
+        },
+        "specialist": {
+          "label": "Specialist",
+          "minutes": 40,
+          "description": "A task needing specialist coverage"
+        }
+      },
+      "ppe_options": [
+        "Gloves",
+        "Gown",
+        "Medical mask",
+        "Eye protection",
+        "Respirator"
+      ],
+      "metrics": {
+        "waiting": 2,
+        "cleaning": 1,
+        "blocked": 0,
+        "ready": 2,
+        "completed": 0,
+        "mean_turnaround": null
+      }
+    }
+  }
+]
