@@ -1,24 +1,24 @@
-# EVSync v0.8 — floor instructions and availability windows
+# EVSync v0.9 — simpler requests and cleaning flow
 
-A static browser prototype with Nurse, EVS Worker, and EVS Admin demos. No backend, database, account, build step, or installation is required.
+A static browser prototype with Nurse, EVS Worker, and EVS Admin demos. No application server, database, account, build step, or package installation is required.
 
-## Open locally
+## Run locally
 
-Extract the ZIP into a fresh folder and open **index.html** in your browser. Alternatively, from the extracted folder:
+Extract the ZIP into a fresh folder and open **index.html** in a browser. Alternatively, from the extracted folder:
 
 ```bash
 python3 server.py
 ```
 
-Open **http://localhost:8000**. This optional server serves static files only and binds to **127.0.0.1**. Stop it with Ctrl+C; use `--port 8001` if needed. The hosted version needs no local server.
+Open **http://localhost:8000**. This optional static-file server binds to **127.0.0.1**. Stop it with Ctrl+C. Use `--port 8001` if needed.
 
 ## Initial demo
 
-Every new page session starts with **62 rooms and one requested cleaning: Room 2150, Pediatrics**. It is available now, uses Standard cleaning, and requires no PPE. Its floor-default instruction is:
+There are **62 rooms** and one cleaning request: **Room 2150, Pediatrics**, Basic cleaning, available now, with no PPE required. EVS sees the floor instruction:
 
 > Retain and clean the reusable stethoscope. Do not discard.
 
-There is no prior cleaning history. The other 61 rooms show no status or timestamp. Refreshing restores this single default request and clears session changes.
+The other rooms have no cleaning history or active request. Each visitor/tab has an independent in-memory session. Refreshing restores the original demo, including floor settings.
 
 | Unit | Inclusive room range | Rooms |
 | --- | --- | --- |
@@ -26,94 +26,84 @@ There is no prior cleaning history. The other 61 rooms show no status or timesta
 | Oncology | 4121–4140 | 20 |
 | Pediatrics | 2150–2170 | 21 |
 
-The app records its own cleaning workflow and history. It makes no claims about occupancy or room readiness and does not connect to a hospital system.
+Room lists sort **Cleaning → Requested → Cleaned → no history**, then by room number within each group. Requested includes work assigned by the Admin or automatic-assignment setting that has not started. Unknown is internal only; the user sees no status or timestamp for those rooms.
 
-Room lists sort in this order:
+Cleaned is historical information, displayed quietly with **As of 06:14, 05/30**, for example. The app does not infer occupancy or room readiness. Cancelling a new request preserves any earlier cleaning history.
 
-1. **Cleaning**
-2. **Requested** (including accepted/assigned jobs that have not started)
-3. **Cleaned**
-4. Rooms with no cleaning history or active request
+Desktop retains the phone frame. Phones use the actual screen directly. The persistent **Demo mode: main menu** button switches roles without resetting the session.
 
-Within each group, room numbers sort numerically. Search and unit/status filters preserve this ordering. There is no user-facing Unknown status: rooms without history show their number and unit, with no status or last-cleaned timestamp.
+## Nurse Demo
 
-**Cleaned** is quiet, neutral historical information. The room displays, for example, **As of 06:14, 05/30**. This records when the worker last marked cleaning complete. It does not mean the room is currently available or suitable for use. The timestamp stays unchanged as time passes.
+**Rooms** and **Requests** have styled icon headings. Back is a prominent button and returns to the list you came from. Back from Edit returns to the active request details.
 
-## Real time
+Select a room with no active request to open **Request cleaning** immediately, with that room selected. This includes rooms that were previously cleaned. An active room opens its request details with **Edit / Cancel**.
 
-Requests, acceptance, starts, completion, and estimates use the actual device clock. Display uses the browser's local time zone, 24-hour time, and month/day dates. Timestamps retain their full date internally, so estimates work across midnight and year boundaries.
+The form uses task questions:
 
-The desktop phone clock and visible estimates refresh automatically without replacing controls, losing form edits, or clearing the PPE acknowledgement. Estimated finish means the predicted end of cleaning. Passing an estimate does not automatically mark a task complete.
+- **Which room?**
+- **When will the room be available?** — Now or Later.
+- **How much cleaning is required?** — Basic (20 min) or Extra (30 min).
+- **How urgent is this request?** — Routine or Urgent.
+- **What PPE is required?** — Optional; leaving everything unchecked is valid.
+- **Any additional instructions?** — One optional text field, always visible.
 
-Cleaning times remain **Standard 20 min**, **Enhanced 30 min**, and **Specialist 40 min**. Estimates use fictional travel/preparation/queue assumptions; automatic assignment always picks the demo worker.
+There are no separate equipment instructions, floor-default selection, or expandable notes section. Nurse instructions are appended to the floor instructions EVS receives; nurses cannot remove or replace those floor instructions.
+
+**Later** reveals one availability date/time, initially suggesting 30 minutes ahead. There is no end time or expiry. The form scrolls only if needed to show the date field, and keeps Now/Later visible. Reduced-motion preferences are respected.
+
+New availability times cannot be in the past. Editing other request details preserves an existing availability timestamp even after that time has passed. Availability can be changed before cleaning starts; after starting, it is fixed while other request details remain editable.
+
+Saving an edit updates the same request. **Cancel** asks for confirmation, withdraws the request (including active work), and returns to the list. It does not record a completed cleaning.
+
+## EVS Worker Demo
+
+The worker is **Maya Chen**. The list includes unassigned requests and Maya's assigned/active work, Urgent first and then oldest request. Other workers' assignments are excluded. Urgent cards are red, routine cards are white, and PPE is shown.
+
+Open a task to see its floor instructions followed by any additional Nurse instructions.
+
+Before starting there is one action: **Start cleaning now**. It requires **Required PPE and room instructions confirmed**, the room's availability time to have arrived, and no other cleaning in progress. Starting also assigns an unassigned request to Maya in that same action. There is no separate accept/reserve step.
+
+After starting, two actions appear side by side: **Cancel / Mark as done**.
+
+- **Cancel** releases the active task and returns the same request to the list. It does not withdraw the Nurse request or record completion. Starting it again begins a fresh cleaning.
+- **Mark as done** records the actual completion time, updates the room's Cleaned history, and returns to the worker list.
+
+The real clock enables the start button when availability arrives, retaining the PPE acknowledgement. Availability has no expiry; a future request can be started at any later time.
+
+## EVS Admin Demo
+
+**Tasks** shows all active requests. The Admin can assign an unassigned task to Maya or return an unstarted assignment to the queue. Assignment does not start cleaning.
+
+**Settings → Automatically assign new tasks** defaults to off. Turning it on assigns subsequent requests to Maya. Existing tasks retain their assignments. It does not auto-start or interrupt cleaning.
+
+**Settings → Floor instructions** lets the Admin choose a unit and edit its instructions. Pediatrics initially has the stethoscope instruction; the other units start empty. Saved instructions automatically appear on every EVS task in that unit, including existing requests. Nurse notes stay separate in the model and remain appended in the EVS display. Unsaved Admin text survives clock updates and changes to the automatic-assignment toggle.
 
 ## Quick walkthrough
 
-1. Open **EVS Worker Demo**. There is exactly one request: **Room 2150, Pediatrics**. Open it to see the stethoscope instruction.
-2. Choose **Accept job** to reserve it. Check **Required PPE and room instructions confirmed**, then choose **Start now**. Starting directly also accepts the task.
-3. Switch to Nurse Demo: Room 2150 is **Cleaning** and sorts first.
-4. Return to the worker task and choose **Mark as done**. Nurse Demo shows **Cleaned** with the actual completion date and time.
-5. In Nurse Demo, request **Room 2151**. Open the larger **Equipment instructions & notes** control; it scrolls the revealed content into view. Select **Use floor defaults** to include the same stethoscope instruction, and add custom instructions if useful.
-6. Keep availability as **Now**, or choose **Later** and enter **From** and optional **Until** dates/times. Send the request. Future tasks can be accepted in advance, but Start now stays disabled until the room's window begins.
-7. Use **Edit** to change an unstarted task's window, including switching back to Now. Refreshing restores the single Room 2150 demo request.
+1. Open **EVS Worker Demo → Room 2150**. Review the stethoscope instruction, check the acknowledgement, and choose **Start cleaning now**.
+2. Switch to Nurse Demo and observe Cleaning at the top of the list.
+3. Return to the worker task and choose **Mark as done**. Nurse Demo now shows Cleaned with the actual timestamp.
+4. Select that cleaned room or another inactive room: the request form opens immediately. Try Extra cleaning and add one note.
+5. Try Later. It adds only the availability start. Submit the request and observe the disabled worker start button until that time. Use Nurse Edit to switch back to Now for immediate demonstration.
+6. Open **EVS Admin Demo → Settings → Floor instructions**. Change the Pediatrics instruction, save it, and return to the worker task to see the update alongside the Nurse note.
 
-The persistent main-menu button preserves requests, settings, and history while switching roles. On phones the app fills the screen; desktop retains the phone frame. Each visitor/tab has its own session. There is no browser storage or communication between browsers.
+## Time and estimates
 
-## Nurse controls
+All action timestamps use the actual device clock and full dates internally. Display uses the browser's local time zone, 24-hour time, and month/day dates. The phone clock and visible estimates refresh without replacing controls or losing text input.
 
-Active requests have **Edit / Cancel** side by side. Edit opens the existing class, priority, PPE, equipment instructions, and notes. Saving updates the same request and its estimate while preserving request, acceptance, and start times. The room cannot be changed. An edit cannot give the assigned worker requirements outside their demo capabilities.
-
-**Cancel** asks for confirmation, then withdraws the request, including active work. It records no completion. Any earlier cleaning timestamp remains: a room cleaned earlier returns to its previous Cleaned history; a room never cleaned returns to showing no status information.
-
-### Equipment instructions and floor defaults
-
-The **Equipment instructions & notes** section has a large, full-width tap target. Opening it scrolls the new fields into view; closing it does not scroll. Reduced-motion preferences are respected.
-
-For Pediatrics rooms, **Use floor defaults** is an optional checkbox that previews the exact instruction before you select it. It adds the reusable-stethoscope instruction alongside any custom equipment instructions and notes. It does not overwrite typed text or select PPE. Other units currently have no configured floor defaults, so the option is hidden there. The seeded request has the Pediatrics default selected; new requests leave it unchecked.
-
-### Availability windows
-
-**Available for cleaning** defaults to **Now**. **Later** reveals date/time fields, initially suggesting 30 minutes ahead with a one-hour window. **Until** can be cleared to allow an open-ended window.
-
-A new scheduled start must not be in the past. If an end is supplied, the window must fit the selected cleaning duration. Requests and their availability appear in Nurse, Worker, and Admin details; future times also appear in task cards. Accepted-task estimates respect availability, travel, preparation, and existing work. An urgent future reservation does not block estimates for work available now.
-
-A future task can be accepted in advance. **Start now** requires both the PPE/instructions acknowledgement and an open window with enough time left for cleaning. The live clock enables it when the window opens, without clearing acknowledgement. If the task can no longer fit, the worker is told to ask the nurse to update the window. This never auto-starts, auto-completes, or deletes the request.
-
-The nurse can edit the window before cleaning starts. Once cleaning has started, the window is fixed; equipment instructions and notes remain editable. These times are manually entered demo information, not data from a hospital system.
-
-## EVS Worker controls
-
-The demo worker is **Maya Chen**. The task list shows unclaimed requests and Maya's claimed/in-progress work, sorted Urgent first, then oldest request. Urgent cards are red, routine cards are white, and PPE is included. Other workers' assignments do not appear in Maya's list.
-
-| Task state | Side-by-side actions |
-| --- | --- |
-| Requested | **Accept job / Start now** |
-| Accepted | **Cancel job / Start now** |
-| Cleaning | **Cancel job / Mark as done** |
-
-A worker may reserve multiple tasks but may clean only one at a time. **Mark as done** records the completion time and frees the worker for the next task.
-
-**Cancel job** releases the claim and returns that same request to the available list. It does not withdraw the nurse's request or record a completed cleaning. Cancelling active work clears its progress; accepting/starting again begins a fresh cleaning. Automatic assignment does not immediately reclaim a released job.
-
-## EVS Admin controls
-
-**Tasks** shows all active requests, including other workers' work. The admin can assign an unclaimed task to Maya or return an unstarted assignment to the available list.
-
-**Settings → Automatically assign new tasks** defaults to off. Turning it on assigns only subsequent requests to Maya. It does not assign existing requests, start tasks, or interrupt work in progress.
+Assigned-task estimates include the worker's current queue, room availability, travel, preparation, and Basic/Extra cleaning time. Unassigned requests await a worker before receiving an estimate. A future assignment does not block an estimate for work available now. Estimates are fictional demo business logic, and passing one never automatically completes cleaning.
 
 ## GitHub Pages
 
-See **GITHUB_PAGES.md** for browser instructions. The hosting steps are unchanged: upload the extracted folder's contents with `index.html` at the repository root, then configure **Settings → Pages → Deploy from a branch → main → / (root)**.
+See **GITHUB_PAGES.md** for the browser instructions. Upload the extracted folder's contents with `index.html` at the repository root, then select **Settings → Pages → Deploy from a branch → main → / (root)**. Relative asset paths and `.nojekyll` are included. No backend deployment is needed.
 
-The files use relative paths and support GitHub project URLs. `.nojekyll` is included. Nothing has been published on your behalf.
+## Source and verification
 
-## Source and checks
-
-- `domain.js`: session state, room history, claims, assignment, real-time estimates, validation, and sorting.
-- `app.js`: the three role views and local actions.
-- `index.html` / `style.css`: responsive phone interface and persistent main-menu footer.
+- `domain.js`: room history, request validation, start/cancel/complete, Admin assignment, unit instructions, real timestamps, and estimates.
+- `app.js`: the three role views, request questions, navigation, and conditional availability scrolling.
+- `index.html` / `style.css`: responsive phone interface and fixed demo-menu footer.
 - `server.py`: optional localhost-only static server.
-- `tests/`: model and frontend-wiring checks.
+- `tests/`: domain and frontend-wiring checks.
 
 With Node 18+:
 
@@ -121,6 +111,6 @@ With Node 18+:
 node --test tests/*.test.cjs
 ```
 
-All **76 checks pass**, covering the single seeded request, floor-default previews and selection, custom-note retention, notes-section scroll wiring, future windows and start gating, deadline validation, editing, real-time estimates, midnight/date handling, room sorting, cleaning history, cancellation, optional PPE, paired actions, admin assignment, and menu retention.
+All **65 checks pass**. They cover automatic instructions and Admin editing, Basic/Extra durations, single-action starts, PPE confirmation, start-time-only availability, no-scroll and constrained-scroll cases, direct room-to-form navigation, back routing, cancellation, history, sorting, real clock behavior, input retention, and static asset paths.
 
-Frontend checks use a small DOM adapter, not a visual renderer. Visual browser verification was unavailable because the workspace's managed preview service was unavailable.
+Frontend checks use a small DOM adapter and viewport geometry fixtures, not a visual renderer. Rendered visual verification was unavailable because the managed preview service was unavailable.

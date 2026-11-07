@@ -17,7 +17,7 @@ def main():
         server = ThreadingHTTPServer(('127.0.0.1', args.port), handler)
     except OSError as error:
         parser.exit(1, f'Could not start preview: {error}. Try --port 8001.\n')
-    print(f'EVSync v0.8: http://localhost:{server.server_port}\nPress Ctrl+C to stop.', flush=True)
+    print(f'EVSync v0.9: http://localhost:{server.server_port}\nPress Ctrl+C to stop.', flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -6,6 +6,8 @@ let role = 'menu';
 let screen = 'menu';
 let selectedRoom = null;
 let editingJob = null;
+let nurseList = 'rooms';
+let adminUnit = 'Pediatrics';
 const selectedWorker = Domain.USER_WORKER_ID;
 let selectedTask = null;
 let roomSearch = '';
@@ -18,15 +20,15 @@ let toastTimer;
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pad = (n) => String(n).padStart(2,'0');
-const time = (n) => n == null ? 'Awaiting acceptance' : `${pad(new Date(n).getHours())}:${pad(new Date(n).getMinutes())}`;
+const time = (n) => n == null ? '' : `${pad(new Date(n).getHours())}:${pad(new Date(n).getMinutes())}`;
 const dateTime = (n) => n == null ? '' : `${time(n)}, ${pad(new Date(n).getMonth()+1)}/${pad(new Date(n).getDate())}`;
 const asOf = (n) => n == null ? '' : `As of ${dateTime(n)}`;
 const cleanedStamp = (n) => `<time datetime="${new Date(n).toISOString()}">${asOf(n)}</time>`;
-const estimate = (job) => job.window_conflict ? 'Outside availability window' : job.estimated_finish == null ? 'Awaiting acceptance' : dateTime(job.estimated_finish);
+const estimate = (job) => job.estimated_finish == null ? 'Awaiting worker' : dateTime(job.estimated_finish);
 const localInputTime = (n) => `${new Date(n).getFullYear()}-${pad(new Date(n).getMonth()+1)}-${pad(new Date(n).getDate())}T${time(n)}`;
-const availabilityText = (job) => job.availability_mode==='now'?'Now':`${dateTime(job.available_from)}${job.available_until==null?' onward':' – '+dateTime(job.available_until)}`;
+const availabilityText = (job) => job.availability_mode==='now'?'Now':`From ${dateTime(job.available_from)}`;
 const availabilityRow = (job) => `<dt>Available</dt><dd>${esc(availabilityText(job))}</dd>`;
-const scheduledLabel = (job) => job.availability_mode==='later'?`<span class="task-window">From ${dateTime(job.available_from)}${job.available_until==null?'':' · until '+dateTime(job.available_until)}</span>`:'';
+const scheduledLabel = (job) => job.availability_mode==='later'?`<span class="task-window">From ${dateTime(job.available_from)}</span>`:'';
 const now = () => state.settings.now;
 const jobForRoom = (id) => state.jobs.find(j => j.room_id === id && ['queued','assigned','cleaning'].includes(j.status));
 const workerFor = (j) => state.workers.find(w => w.id === j?.worker_id);
@@ -76,13 +78,12 @@ async function mutate(action, payload={}, message='Updated') {
 function appHeader() {
   if(role==='menu')return '<header class="app-header"><h1>Choose a demo</h1></header>';
   if(role==='evs'||role==='admin') {
-    const identity=role==='evs'?'Maya Chen':'EVS Admin';
     const title=role==='evs'?'Cleaning tasks':'EVS Admin';
-    return `<header class="app-header">${screen==='task'?`<button class="back-button" data-back-tasks>${icon('back',16)} Tasks</button>`:`<h1>${title}</h1>`}${role==='evs'?`<span class="identity-label">${identity}</span>`:''}</header>`;
+    return `<header class="app-header">${screen==='task'?`<button class="back-button" data-back-tasks>${icon('back')} Back</button>`:`<h1>${title}</h1>`}${role==='evs'?'<span class="identity-label">Maya Chen</span>':''}</header>`;
   }
   const title=screen==='edit'?'Edit request':screen==='form'?'Request cleaning':screen==='detail'?`Room ${selectedRoom}`:screen==='requests'?'Requests':'Rooms';
   const back=['form','edit','detail'].includes(screen);
-  return `<header class="app-header">${back?`<div class="header-title"><button class="back-button" data-screen="${screen==='edit'?'detail':'rooms'}">${icon('back',16)} Back</button><h1>${title}</h1></div>`:`<h1>${title}</h1>`}</header>`;
+  return `<header class="app-header ${back?'':'nurse-list-header'}">${back?`<div class="header-title"><button class="back-button" data-screen="${screen==='edit'?'detail':nurseList}">${icon('back')} Back</button><h1>${title}</h1></div>`:`<h1 class="screen-title"><span class="title-mark" aria-hidden="true">${icon(screen==='requests'?'list':'rooms',23)}</span><span>${title}</span></h1>`}</header>`;
 }
 
 function nurseNav() {
@@ -129,8 +130,8 @@ function ppeChips(job) {
   return `<div class="ppe-chips">${job.ppe.map(p => `<span class="ppe-chip">${esc(p)}</span>`).join('')}</div>`;
 }
 function requestDetails(job) {
-  const equipment=Domain.equipmentInstructions(job);
-  return `<section class="info-block"><h2>Required PPE</h2>${ppeChips(job)}</section>${equipment ? `<section class="info-block equipment-note"><h2>Equipment instructions</h2><p>${esc(equipment)}</p></section>` : ''}${job.notes ? `<section class="info-block"><h2>Nurse’s note</h2><p>${esc(job.notes)}</p></section>` : ''}`;
+  const text=role==='nurse'?job.notes:Domain.instructions(state,job);
+  return `<section class="info-block"><h2>Required PPE</h2>${ppeChips(job)}</section>${text?`<section class="info-block instructions-note"><h2>${role==='nurse'?'Additional instructions':'Instructions'}</h2><p>${esc(text)}</p></section>`:''}`;
 }
 
 function nurseDetail() {
@@ -141,48 +142,40 @@ function nurseDetail() {
 function requestForm() {
   const job=screen==='edit'?state.jobs.find(j=>j.id===editingJob):null;
   const rooms=Domain.sortedRooms(state,state.rooms.filter(r=>r.id===job?.room_id||!jobForRoom(r.id)));
-  if (!rooms.length) return `<div class="app-content"><p>No rooms available for a new request.</p><p class="supporting-text">Every room already has an active request.</p></div>${nurseNav()}`;
+  if(!rooms.length)return `<div class="app-content"><p>Every room already has an active request.</p></div>${nurseNav()}`;
   const room=rooms.find(r=>r.id===(job?.room_id||selectedRoom))||rooms[0],priority=job?.priority||'routine';
   const mode=job?.availability_mode||'now',locked=job?.status==='cleaning';
   const from=job?.availability_mode==='later'?job.available_from:Math.ceil((Date.now()+30*Domain.MINUTE)/(5*Domain.MINUTE))*5*Domain.MINUTE;
-  const until=job?.availability_mode==='later'?job.available_until:from+60*Domain.MINUTE;
-  const floor=Domain.floorDefaults(room.unit);
-  return `<div class="app-content"><form id="request-form"><div id="form-error" class="form-error" role="alert" ${formError ? '' : 'hidden'}>${esc(formError)}</div>
-    <div class="form-field"><label for="request-room">Room</label><select id="request-room" name="room_id" required ${job?'disabled':''}>${rooms.map(r => `<option value="${r.id}" ${r.id===room.id?'selected':''}>${r.id} · ${r.unit}</option>`).join('')}</select></div>
-    <fieldset class="availability-choice" ${locked?'disabled':''}><legend>Available for cleaning</legend><div class="choice-grid">${['now','later'].map(value=>`<label class="choice"><input id="availability-${value}" type="radio" name="availability_mode" value="${value}" ${mode===value?'checked':''}>${value==='now'?'Now':'Later'}</label>`).join('')}</div>
-      <fieldset id="availability-fields" class="availability-fields" ${mode==='now'?'hidden':''} ${mode==='now'||locked?'disabled':''}>
-        <div class="form-field"><label for="available-from">From</label><input id="available-from" name="available_from" type="datetime-local" value="${localInputTime(from)}" min="${localInputTime(Math.min(Date.now(),from))}" required></div>
-        <div class="form-field"><label for="available-until">Until <span class="optional-label">(optional)</span></label><input id="available-until" name="available_until" type="datetime-local" value="${until==null?'':localInputTime(until)}"></div>
-        <p class="supporting-text">Cleaning must fit within the window. Leave Until blank for no end time.</p>
-      </fieldset>${locked?'<p class="supporting-text">The time window is fixed after cleaning starts.</p>':''}</fieldset>
-    <div class="form-field"><label for="cleaning-class">Cleaning class</label><select id="cleaning-class" name="cleaning_class">${Object.entries(state.classes).map(([id,c]) => `<option value="${id}" ${id===(job?.cleaning_class||'standard')?'selected':''}>${c.label} (${state.settings.durations[id]} min)</option>`).join('')}</select></div>
-    <fieldset><legend>Priority</legend><div class="choice-grid">${['routine','urgent'].map(value=>`<label class="choice"><input type="radio" name="priority" value="${value}" ${priority===value?'checked':''}>${value==='urgent'?'Urgent':'Routine'}</label>`).join('')}</div></fieldset>
-    <fieldset><legend>PPE requirements <span class="optional-label">(optional)</span></legend><div class="choice-grid">${state.ppe_options.map(p => `<label class="choice"><input type="checkbox" name="ppe" value="${esc(p)}" ${job?.ppe.includes(p)?'checked':''}>${esc(p)}</label>`).join('')}</div></fieldset>
-    <details id="request-extra-fields" class="extra-fields" ${job?.equipment||job?.notes||job?.use_floor_defaults?'open':''}><summary id="request-extra-summary">Equipment instructions & notes <span class="optional-label">(optional)</span></summary><div id="request-extras" class="request-extras">
-      <label id="floor-default-options" class="check-line floor-default-choice" ${floor.equipment?'':'hidden'}><input id="use-floor-defaults" name="use_floor_defaults" type="checkbox" ${job?.use_floor_defaults?'checked':''} ${floor.equipment?'':'disabled'}><span><strong>Use floor defaults</strong><span id="floor-default-preview">${esc(floor.equipment)}</span></span></label>
-      <div class="form-field"><label for="equipment">Equipment instructions <span class="optional-label">(optional)</span></label><input id="equipment" name="equipment" type="text" maxlength="300" placeholder="Items to retain, clean, or handle separately" value="${esc(job?.equipment||'')}"></div><div class="form-field"><label for="nurse-note">Additional instructions <span class="optional-label">(optional)</span></label><textarea id="nurse-note" name="notes" maxlength="600">${esc(job?.notes||'')}</textarea></div>
-    </div></details></form></div><div class="app-bottom"><button type="submit" form="request-form" class="primary full">${job?'Save changes':'Send request'}</button></div>`;
-}
-function updateFloorDefaults() {
-  const room=state.rooms.find(r=>r.id===$('#request-room')?.value),floor=Domain.floorDefaults(room?.unit);
-  const wrapper=$('#floor-default-options'),checkbox=$('#use-floor-defaults');
-  if(wrapper)wrapper.hidden=!floor.equipment;
-  if(checkbox)checkbox.disabled=!floor.equipment;
-  if($('#floor-default-preview'))$('#floor-default-preview').textContent=floor.equipment;
+  return `<div class="app-content"><form id="request-form"><div id="form-error" class="form-error" role="alert" ${formError?'':'hidden'}>${esc(formError)}</div>
+    <div class="form-field"><label for="request-room">Which room?</label><select id="request-room" name="room_id" required ${job?'disabled':''}>${rooms.map(r=>`<option value="${r.id}" ${r.id===room.id?'selected':''}>${r.id} · ${r.unit}</option>`).join('')}</select></div>
+    <fieldset id="availability-choice" class="availability-choice" ${locked?'disabled':''}><legend>When will the room be available?</legend><div id="availability-buttons" class="choice-grid">${['now','later'].map(value=>`<label class="choice"><input id="availability-${value}" type="radio" name="availability_mode" value="${value}" ${mode===value?'checked':''}>${value==='now'?'Now':'Later'}</label>`).join('')}</div>
+      <fieldset id="availability-fields" class="availability-fields" ${mode==='now'?'hidden':''} ${mode==='now'||locked?'disabled':''}><div class="form-field"><label for="available-from">Available from</label><input id="available-from" name="available_from" type="datetime-local" value="${localInputTime(from)}" min="${localInputTime(Math.min(Date.now(),from))}" required></div></fieldset>
+      ${locked?'<p class="supporting-text">Availability is fixed once cleaning starts.</p>':''}</fieldset>
+    <fieldset><legend>How much cleaning is required?</legend><div class="choice-grid cleaning-choices">${Object.entries(state.classes).map(([id,c])=>`<label class="choice"><input type="radio" name="cleaning_class" value="${id}" ${id===(job?.cleaning_class||'basic')?'checked':''}><span>${c.label}<small>${state.settings.durations[id]} min</small></span></label>`).join('')}</div></fieldset>
+    <fieldset><legend>How urgent is this request?</legend><div class="choice-grid">${['routine','urgent'].map(value=>`<label class="choice"><input type="radio" name="priority" value="${value}" ${priority===value?'checked':''}>${value==='urgent'?'Urgent':'Routine'}</label>`).join('')}</div></fieldset>
+    <fieldset><legend>What PPE is required? <span class="optional-label">(optional)</span></legend><div class="choice-grid">${state.ppe_options.map(p=>`<label class="choice"><input type="checkbox" name="ppe" value="${esc(p)}" ${job?.ppe.includes(p)?'checked':''}>${esc(p)}</label>`).join('')}</div></fieldset>
+    <div class="form-field"><label for="nurse-note">Any additional instructions? <span class="optional-label">(optional)</span></label><textarea id="nurse-note" name="notes" rows="3" maxlength="600" placeholder="Add instructions specific to this room.">${esc(job?.notes||'')}</textarea></div>
+    </form></div><div class="app-bottom"><button type="submit" form="request-form" class="primary full">${job?'Save changes':'Send request'}</button></div>`;
 }
 function updateAvailabilityFields() {
   const fields=$('#availability-fields');if(!fields)return;
   const later=$('#availability-later')?.checked,locked=state.jobs.find(j=>j.id===editingJob)?.status==='cleaning';
   fields.hidden=!later;fields.disabled=!later||locked;
-  const from=new Date($('#available-from')?.value||'').getTime();
-  const duration=state.settings.durations[$('#cleaning-class')?.value];
-  if(Number.isFinite(from)&&duration)$('#available-until').min=localInputTime(from+duration*Domain.MINUTE);
 }
-function revealSection(id) {
+function ensureAvailabilityVisible() {
   requestAnimationFrame(()=>{
-    if(id==='request-extras'&&!$('#request-extra-fields')?.open)return;
+    const content=$('.app-content'),buttons=$('#availability-buttons'),fields=$('#availability-fields');
+    if(!content||!buttons||!fields||fields.hidden)return;
+    const viewport=content.getBoundingClientRect(),choice=buttons.getBoundingClientRect(),input=fields.getBoundingClientRect();
+    const top=content.scrollTop,margin=8;
+    if(input.bottom<=viewport.bottom&&choice.top>=viewport.top)return;
+    // Scroll only as far as needed; the Now/Later choices stay above the date field.
+    const keepChoices=top+choice.top-viewport.top-margin;
+    let target=input.bottom>viewport.bottom?Math.min(top+input.bottom-viewport.bottom+margin,keepChoices):keepChoices;
+    target=Math.max(0,target);
+    if(Math.abs(target-top)<1)return;
     const reduced=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-    $('#'+id)?.scrollIntoView({block:'start',behavior:reduced?'auto':'smooth'});
+    content.scrollTo({top:target,behavior:reduced?'auto':'smooth'});
   });
 }
 
@@ -202,9 +195,10 @@ function anotherActiveTask(job) {return state.jobs.some(j=>j.id!==job.id&&j.work
 function evsDetail() {
   const job=currentTask();
   if(!job||!Domain.requestedTasks(state).some(j=>j.id===job.id))return '<div class="app-content"><p>This task is no longer available.</p></div>';
-  const accepted=job.status==='assigned',started=job.status==='cleaning';
-  return `<div class="app-content"><section class="task-heading ${job.priority==='urgent'?'urgent':''}">${taskSummary(job)}</section>${requestDetails(job)}<dl class="detail-grid"><dt>Cleaning time</dt><dd>${job.duration} min</dd>${availabilityRow(job)}<dt>Estimated finish</dt><dd data-estimate="${job.id}">${estimate(job)}</dd>${started?`<dt>Started</dt><dd>${dateTime(job.started_at)}</dd>`:''}</dl></div><div class="app-bottom worker-action-area">${!started?`<label class="check-line"><input id="ppe-confirmed" type="checkbox"><span>Required PPE and room instructions confirmed</span></label><p id="start-restriction" class="supporting-text task-busy-note" hidden></p>`:''}<div class="worker-actions paired-actions">${accepted||started?`<button class="danger-btn" data-action="release-job" data-job="${job.id}">Cancel job</button>`:`<button class="secondary" data-action="accept-job" data-job="${job.id}">Accept job</button>`}${started?`<button class="primary" data-action="complete-job" data-job="${job.id}">Mark as done</button>`:`<button id="start-job" class="primary" data-action="start" data-job="${job.id}" data-worker="${selectedWorker}" disabled>Start now</button>`}</div></div>`;
+  const started=job.status==='cleaning';
+  return `<div class="app-content"><section class="task-heading ${job.priority==='urgent'?'urgent':''}">${taskSummary(job)}</section>${requestDetails(job)}<dl class="detail-grid"><dt>Cleaning time</dt><dd>${job.duration} min</dd>${availabilityRow(job)}<dt>Estimated finish</dt><dd data-estimate="${job.id}">${estimate(job)}</dd>${started?`<dt>Started</dt><dd>${dateTime(job.started_at)}</dd>`:''}</dl></div><div class="app-bottom worker-action-area">${started?`<div class="worker-actions paired-actions"><button class="danger-btn" data-action="release-job" data-job="${job.id}">Cancel</button><button class="primary" data-action="complete-job" data-job="${job.id}">Mark as done</button></div>`:`<label class="check-line"><input id="ppe-confirmed" type="checkbox"><span>Required PPE and room instructions confirmed</span></label><p id="start-restriction" class="supporting-text task-busy-note" hidden></p><button id="start-job" class="primary full" data-action="start" data-job="${job.id}" disabled>Start cleaning now</button>`}</div>`;
 }
+
 function adminNav() {
   return `<nav class="app-nav" aria-label="EVS admin navigation"><button data-admin-screen="tasks" class="${screen==='tasks'||screen==='task'?'selected':''}">${icon('list')} Tasks</button><button data-admin-screen="settings" class="${screen==='settings'?'selected':''}">Settings</button></nav>`;
 }
@@ -213,8 +207,10 @@ function adminTasks() {
   return `<div class="app-content"><div class="task-list">${tasks.map(j=>`<button class="task-card ${j.priority==='urgent'?'urgent':''}" data-admin-task="${j.id}">${taskSummary(j,true,true)}</button>`).join('')||'<p class="supporting-text">No active requests.</p>'}</div></div>${adminNav()}`;
 }
 function adminSettings() {
-  return `<div class="app-content"><section class="settings-section"><label class="setting-row" for="auto-assign"><span>Automatically assign new tasks</span><span class="switch-control"><input id="auto-assign" type="checkbox" role="switch" ${state.settings.automatic_assignment?'checked':''}><span aria-hidden="true"></span></span></label><p class="supporting-text">New tasks are assigned to ${esc(state.workers.find(w=>w.id===selectedWorker).name)} when this is on. Existing tasks keep their current assignments.</p></section></div>${adminNav()}`;
+  return `<div class="app-content"><section class="settings-section"><label class="setting-row" for="auto-assign"><span>Automatically assign new tasks</span><span class="switch-control"><input id="auto-assign" type="checkbox" role="switch" ${state.settings.automatic_assignment?'checked':''}><span aria-hidden="true"></span></span></label><p class="supporting-text">When enabled, new tasks are assigned to Maya Chen. Existing tasks keep their assignments.</p></section>
+    <section class="settings-section floor-settings"><h2>Floor instructions</h2><form id="floor-instructions-form"><div id="form-error" class="form-error" role="alert" hidden></div><div class="form-field"><label for="defaults-unit">Which unit?</label><select id="defaults-unit" name="unit">${Object.keys(state.settings.floor_instructions).map(unit=>`<option ${unit===adminUnit?'selected':''}>${unit}</option>`).join('')}</select></div><div class="form-field"><label for="floor-instructions">Instructions for this unit</label><textarea id="floor-instructions" name="instructions" rows="4" maxlength="600">${esc(state.settings.floor_instructions[adminUnit])}</textarea></div><p class="supporting-text">Shown automatically on every EVS task in this unit.</p><button type="submit" class="primary full">Save instructions</button></form></section></div>${adminNav()}`;
 }
+
 function adminDetail() {
   const job=currentTask();if(!job)return '<div class="app-content">Task not found.</div>'+adminNav();
   return `<div class="app-content"><section class="task-heading ${job.priority==='urgent'?'urgent':''}">${taskSummary(job)}</section><dl class="detail-grid"><dt>Worker</dt><dd>${esc(workerFor(job)?.name||'Unassigned')}</dd><dt>Requested</dt><dd>${dateTime(job.requested_at)}</dd>${availabilityRow(job)}<dt>Estimated finish</dt><dd data-estimate="${job.id}">${estimate(job)}</dd></dl>${requestDetails(job)}</div>${job.status==='queued'?`<div class="app-bottom"><button class="primary full" data-action="admin-assign" data-job="${job.id}">Assign to demo worker</button></div>`:job.status==='assigned'?`<div class="app-bottom"><button class="secondary full" data-action="admin-unassign" data-job="${job.id}">Return to available tasks</button></div>`:''}${adminNav()}`;
@@ -229,6 +225,7 @@ function updateStartButton() {
 }
 
 function renderPhone() {
+  if(role==='nurse'&&screen==='detail'&&selectedRoom&&!jobForRoom(selectedRoom)){editingJob=null;screen='form';}
   if(['form','edit'].includes(screen)&&role==='nurse'&&$('#request-form'))return;
   const scroll=$('.app-content')?.scrollTop||0;
   const oldJob=$('[data-action="start"]')?.dataset.job;
@@ -250,6 +247,7 @@ function enterDemo(mode) {role=mode;selectedTask=null;navigate(mode==='nurse'?'r
 
 function navigate(next) {
   screen = next;
+  if(role==='nurse'&&['rooms','requests'].includes(next))nurseList=next;
   $('#phone-app').innerHTML = '';
   formError = '';
   refreshClock();
@@ -270,8 +268,6 @@ function showModal(html) {
 function closeModal() { $('#modal-root').innerHTML=''; modalReturnFocus?.focus(); }
 
 document.addEventListener('click',async(e)=>{
-  const summary=e.target.closest('summary');
-  if(summary?.id==='request-extra-summary'&&!$('#request-extra-fields')?.open)revealSection('request-extras');
   const el=e.target.closest('button');if(!el||busy||el.disabled)return;
   if(el.dataset.demo){enterDemo(el.dataset.demo);return;}
   if(el.dataset.action==='main-menu'){closeModal();enterDemo('menu');return;}
@@ -279,12 +275,11 @@ document.addEventListener('click',async(e)=>{
   if(el.dataset.screen){navigate(el.dataset.screen);return;}
   if(el.dataset.adminScreen){navigate(el.dataset.adminScreen);return;}
   if(el.hasAttribute('data-back-tasks')){selectedTask=null;navigate('tasks');return;}
-  if(el.dataset.room){selectedRoom=el.dataset.room;navigate('detail');return;}
+  if(el.dataset.room){selectedRoom=el.dataset.room;editingJob=null;navigate(jobForRoom(selectedRoom)?'detail':'form');return;}
   if(el.dataset.task||el.dataset.adminTask){selectedTask=el.dataset.task||el.dataset.adminTask;navigate('task');return;}
   const action=el.dataset.action,id=el.dataset.job;
   if(action==='new-request'){editingJob=null;selectedRoom=el.dataset.roomId||selectedRoom;navigate('form');}
   if(action==='edit-request'){editingJob=id;navigate('edit');}
-  if(action==='accept-job'&&await mutate('accept',{job_id:id},'Job accepted'))render();
   if(action==='release-job'&&await mutate('release',{job_id:id},'Job returned to requested tasks'))render();
   if(action==='admin-assign'&&await mutate('assign',{job_id:id},'Assigned to demo worker'))render();
   if(action==='admin-unassign'&&await mutate('unassign',{job_id:id},'Returned to available tasks'))render();
@@ -294,34 +289,36 @@ document.addEventListener('click',async(e)=>{
   }
   if(action==='complete-job'&&await mutate('complete',{job_id:id,checks_confirmed:true},'Room marked cleaned')){selectedTask=null;navigate('tasks');render();}
   if(action==='cancel-request')showModal(`<h2 id="modal-title">Cancel this request?</h2><p>This withdraws the cleaning request, including any work in progress. Any earlier cleaning timestamp will be kept. This does not record a completed cleaning.</p><div class="control-row"><button class="secondary" data-action="close-modal">Keep request</button><button class="danger-btn" data-action="confirm-cancel" data-job="${id}">Cancel request</button></div>`);
-  if(action==='confirm-cancel'&&await mutate('cancel',{job_id:id},'Request cancelled')){closeModal();render();}
+  if(action==='confirm-cancel'&&await mutate('cancel',{job_id:id},'Request cancelled')){closeModal();navigate(nurseList);}
   if(action==='close-modal')closeModal();
 });
 document.addEventListener('change',async(e)=>{
   const el=e.target;
   if(el.id==='unit-filter'){roomUnit=el.value;renderRoomList();}
   if(el.id==='ppe-confirmed')updateStartButton();
-  if(el.id==='request-room')updateFloorDefaults();
-  if(['availability-now','availability-later','available-from','cleaning-class'].includes(el.id)){
-    updateAvailabilityFields();if(el.id==='availability-later'&&el.checked)revealSection('availability-fields');
+  if(['availability-now','availability-later'].includes(el.id)){
+    updateAvailabilityFields();if(el.id==='availability-later'&&el.checked)ensureAvailabilityVisible();
   }
-  if(el.id==='auto-assign'){await mutate('automatic',{enabled:el.checked},'Assignment setting updated');render();}
+  if(el.id==='defaults-unit'){
+    adminUnit=el.value;$('#floor-instructions').value=state.settings.floor_instructions[adminUnit];
+    if($('#form-error'))$('#form-error').hidden=true;
+  }
+  if(el.id==='auto-assign')await mutate('automatic',{enabled:el.checked},'Assignment setting updated');
 });
 document.addEventListener('input',e=>{if(e.target.id==='room-search'){roomSearch=e.target.value;renderRoomList();}});
 document.addEventListener('submit',async(e)=>{
-  if(e.target.id!=='request-form')return;e.preventDefault();
+  if(!['request-form','floor-instructions-form'].includes(e.target.id))return;e.preventDefault();
   const f=new FormData(e.target);
-  const editing=screen==='edit';
-  const previous=editing?state.jobs.find(j=>j.id===editingJob):null;
+  if(e.target.id==='floor-instructions-form'){
+    if(await mutate('floor-instructions',{unit:f.get('unit'),instructions:f.get('instructions')},'Floor instructions saved'))render();
+    return;
+  }
+  const editing=screen==='edit',previous=editing?state.jobs.find(j=>j.id===editingJob):null;
   const roomId=previous?previous.room_id:f.get('room_id');
-  const payload={job_id:editingJob,room_id:roomId,cleaning_class:f.get('cleaning_class'),priority:f.get('priority'),
-    ppe:f.getAll('ppe'),equipment:f.get('equipment'),notes:f.get('notes'),use_floor_defaults:f.has('use_floor_defaults')};
+  const payload={job_id:editingJob,room_id:roomId,cleaning_class:f.get('cleaning_class'),priority:f.get('priority'),ppe:f.getAll('ppe'),notes:f.get('notes')};
   if(previous?.status!=='cleaning'){
     payload.availability_mode=f.get('availability_mode')||'now';
-    if(payload.availability_mode==='later'){
-      payload.available_from=new Date(f.get('available_from')||'').getTime();
-      payload.available_until=f.get('available_until')?new Date(f.get('available_until')).getTime():null;
-    }
+    if(payload.availability_mode==='later')payload.available_from=new Date(f.get('available_from')||'').getTime();
   }
   const result=await mutate(editing?'edit':'request',payload,editing?'Request updated':'Request sent');
   if(result){selectedRoom=roomId;editingJob=null;navigate('detail');render();}

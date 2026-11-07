@@ -4,7 +4,7 @@ This is a static site. GitHub hosts the files and runs no code on your computer.
 
 ## 1. Unzip the download
 
-Extract `evsync-v0.8-static.zip`. Open the extracted `evsync-static` folder.
+Extract `evsync-v0.9-static.zip`. Open the extracted `evsync-static` folder.
 
 You can keep using the app locally by opening `index.html`, or by running `python3 server.py` in that folder and visiting http://localhost:8000. The optional local server binds only to 127.0.0.1. You do not need to run it for GitHub Pages.
 
