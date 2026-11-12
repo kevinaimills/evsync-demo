@@ -355,3 +355,14 @@ details[open]>summary { margin-bottom:9px; }
 .detail-return { margin-top:16px; }
 .simulation-note { margin:0 0 14px; }
 .report-summary-text p { margin:0 0 14px; font-size:15px; line-height:1.65; overflow-wrap:anywhere; }
+
+/* The comparison control is confined to the demo menu. */
+.theme-setting { display:flex; align-items:center; justify-content:space-between; gap:18px; width:100%; min-height:82px; margin:22px 0 2px; padding:14px 16px; background:white; border:1px solid var(--line); border-radius:12px; cursor:pointer; }
+.theme-label { display:flex; flex-direction:column; gap:3px; }
+.theme-label strong { font-size:15px; font-weight:600; }
+.theme-label>span { color:var(--muted); font-size:14px; }
+.theme-setting .switch-control { width:48px; height:44px; }
+.theme-setting .switch-control input { width:48px; height:44px; min-height:44px; }
+.theme-setting .switch-control>span { position:absolute; top:8px; width:48px; }
+.theme-setting .switch-control>span::before { top:4px; }
+.theme-setting .switch-control input:checked+span::before { transform:translateX(20px); }

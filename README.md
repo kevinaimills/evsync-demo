@@ -1,4 +1,4 @@
-# EVSync v0.14
+# EVSync v0.16
 
 A static classroom prototype with Nurse, EVS Worker, and EVS Admin demos. It runs in a browser, including on a phone. No application server, database, account, package installation, or build step is needed.
 
@@ -13,6 +13,12 @@ python3 server.py
 Open **http://localhost:8000**. The optional server serves static files and binds only to **127.0.0.1**. Stop it with Ctrl+C; use `--port 8001` if needed.
 
 Data lives in the current page session. Switching demos preserves it; refreshing resets it. Each visitor and tab is independent. On a phone, the app fills the display; desktop retains the phone frame. **Demo mode: main menu** is always available below the app.
+
+## Compare colour schemes
+
+The app opens in **Bold**. On the main demo menu, use **Colour scheme** to switch between **Bold** (on) and **Original (v0.14)** (off). The current scheme is written beside the switch. **Demo mode: main menu** lets you return to this control from any role.
+
+The choice applies across Nurse, EVS Worker, Admin, forms, dialogs, notifications, and the desktop phone frame. Switching changes appearance without resetting requests, assignments, reports, or settings. The choice lasts for this page session; refreshing starts in Bold again. No preference is stored or sent anywhere.
 
 ## Initial state
 
@@ -76,9 +82,11 @@ Every writing field has **Dictate**: reports, additional instructions, floor ins
 
 Admin navigation is **Tasks / Feedback / Settings**. The Summary / Performance section and its activity-log and sample-performance controls are omitted from this version. Feedback still has **Summarize displayed reports** and source-report review.
 
-Green identifies primary actions and current selections. Informational notifications, including **Job requested!** and assignment notices, use a pale blue background with a narrow side accent. The request confirmation has a checkmark and a flatter shape so it reads as a message rather than a button.
+**Original (v0.14)** preserves the previous restrained palette: green actions, pale blue notifications, amber requested work and precautions, and soft red urgency accents.
 
-Requested-work badges consistently use amber; Cleaning badges use blue. PPE and room instructions use a quiet warm tint. Urgent jobs use a soft red tint and narrow edge instead of a solid red panel. Static details and secondary controls use quieter neutral surfaces. Labels remain visible so colour is never the only way to understand status. Touch target sizes and workflow controls are retained.
+**Bold** uses light blue-grey top bars, navy task headings, teal primary actions, brighter blue selections and Cleaning badges, and stronger coral and amber status accents. The header has a 4 px gap beneath it, with light controls and dark labels for a quieter top edge. The desktop status bar and mobile browser colour match the lighter header. White cards sit on a cool background. Urgent task details receive a coral heading, while list cards retain a softer coral tint. Notifications keep their flat blue treatment and checkmark so they remain distinct from buttons.
+
+The original stylesheet is retained; the bold overrides are isolated in **bold.css** and only apply while Bold is selected. Labels, workflow controls, text sizes, and touch targets are preserved. Colour is never the sole status indicator.
 
 ## GitHub Pages and source
 
@@ -86,7 +94,8 @@ Hosting remains static. Follow **GITHUB_PAGES.md**. Upload the folder's contents
 
 - `domain.js`: state, assignments, reports, summaries, metrics, timestamps, validation, and atomic actions.
 - `app.js`: three role interfaces and local interactions.
-- `index.html` / `style.css`: responsive phone app, dialogs, and persistent main menu.
+- `index.html` / `style.css`: responsive phone app, v0.14 base colours, dialogs, persistent main menu, and the comparison control.
+- `bold.css`: the optional, scoped bold palette.
 - `server.py`: optional localhost-only static server.
 - `tests/`: model and frontend regression checks.
 
@@ -96,4 +105,4 @@ With Node 18+:
 node --test tests/*.test.cjs
 ```
 
-All **149 checks pass**. Frontend checks use a small DOM adapter and viewport geometry fixtures, not a rendered browser. Changed text/background colour pairs were also checked for contrast. Visual verification was unavailable because the managed preview service was unavailable.
+All **152 checks pass**. Frontend checks use a small DOM adapter and viewport geometry fixtures, not a rendered browser. The bold palette's text/background pairs, including the lighter header and its controls, were checked for contrast. A byte comparison also confirmed the v0.14 base stylesheet is preserved. Visual verification was unavailable because the managed preview service was unavailable.

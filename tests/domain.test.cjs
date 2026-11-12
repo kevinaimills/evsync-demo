@@ -298,7 +298,7 @@ test('audit records keep before/after values, actors, reasons, and original requ
  assert.equal(edit.actor,'Nurse Demo');assert.equal(estimate.actor,'EVS worker 1');assert.equal(estimate.details.reason,'More work.');assert.deepEqual(s.events.find(e=>e.kind==='request').details.ppe,['Gloves']);
 });
 test('export includes reports, recommendations, jobs, settings, and activity as an independent snapshot',()=>{
- const s=analyze(cmd(request(),'sample-feedback')),out=D.exportData(s);assert.equal(out.session_only,true);assert.equal(out.version,'0.14');assert.equal(out.reports.length,5);assert.equal(out.recommendations.length,1);
+ const s=analyze(cmd(request(),'sample-feedback')),out=D.exportData(s);assert.equal(out.session_only,true);assert.equal(out.version,'0.16');assert.equal(out.reports.length,5);assert.equal(out.recommendations.length,1);
  out.reports[0].description='Changed copy';assert.notEqual(s.reports[0].description,'Changed copy');assert.equal(out.exported_at,new Date(T).toISOString());
  const reset=cmd(s,'reset');assert.equal(reset.reports.length,0);assert.equal(reset.recommendations.length,0);assert.equal(reset.jobs.length,1);
 });

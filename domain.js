@@ -278,7 +278,7 @@
     const r=schedule(clock(clone(s),at));r.classes=clone(CLASSES);r.ppe_options=[...PPE];r.categories=clone(CATEGORIES);r.events.reverse();r.reports.sort((a,b)=>b.at-a.at||compare(b.id,a.id));
     r.metrics={requested:r.rooms.filter(v=>v.status==='requested').length,cleaning:r.rooms.filter(v=>v.status==='cleaning').length,cleaned:r.rooms.filter(v=>v.status==='cleaned').length};return r;
   }
-  function exportData(s){return {version:'0.14',exported_at:new Date(s.settings.now).toISOString(),session_only:true,settings:clone(s.settings),jobs:clone(s.jobs),reports:clone(s.reports),recommendations:clone(s.recommendations),feedback_summaries:clone(s.feedback_summaries),notifications:clone(s.notifications),workers:clone(s.workers),performance_samples:clone(s.performance_samples),events:clone(s.events)};}
+  function exportData(s){return {version:'0.16',exported_at:new Date(s.settings.now).toISOString(),session_only:true,settings:clone(s.settings),jobs:clone(s.jobs),reports:clone(s.reports),recommendations:clone(s.recommendations),feedback_summaries:clone(s.feedback_summaries),notifications:clone(s.notifications),workers:clone(s.workers),performance_samples:clone(s.performance_samples),events:clone(s.events)};}
   return Object.freeze({USER_WORKER_ID,NURSE_ID,MINUTE,DAY,FLOOR_MAX,TIMEFRAMES:clone(TIMEFRAMES),CLASSES:clone(CLASSES),PPE:[...PPE],CATEGORIES:clone(CATEGORIES),DomainError,newState,schedule,transact,snapshot,
     requestedTasks,taskOrder,myRequests,unreadCompletions,roomStatus,sortedRooms,travelMinutes,floorInstructions,instructions,startIssue,expectedMinutes,workerName,availableWorkers,unreadAssignments,mostAvailableWorker,timeframeStart,inTimeframe,filteredReports,buildFeedbackSummary,buildRecommendation,performance,exportData});
 });

@@ -33,8 +33,9 @@ function harness(at=T,{blank=false}={}){
  }
  for(const match of fs.readFileSync(path.join(ROOT,'index.html'),'utf8').matchAll(/\bid="([^"]+)"/g))nodes.set(match[1],node(match[1]));
  const content=node(),modal=node();content.rect={top:100,bottom:600,height:500};
- document={activeElement:null,hidden:false,styles:{},documentElement:{style:{setProperty(k,v){document.styles[k]=v;}}},
+ document={activeElement:null,hidden:false,styles:{},themeMeta:{content:'#e8eef5',setAttribute(name,value){this[name]=value;}},documentElement:{dataset:{},style:{setProperty(k,v){document.styles[k]=v;}}},
   addEventListener(type,fn){listeners[type]=fn;},querySelector(selector){
+   if(selector==='meta[name="theme-color"]')return document.themeMeta;
    if(selector.startsWith('#'))return nodes.get(selector.slice(1))||null;
    if(selector==='.app-content')return nodes.get('phone-app').innerHTML.includes('app-content')?content:null;
    if(selector.startsWith('.modal'))return nodes.get('modal-root').innerHTML?modal:null;
@@ -464,4 +465,18 @@ test('Admin exposes Tasks, Feedback and Settings, with the retired Summary route
  const h=harness();await h.click({demo:'admin'});assert.deepEqual([...h.html().matchAll(/data-admin-screen="([^"]+)"/g)].map(m=>m[1]),['tasks','feedback','settings']);assert.ok(!h.html().includes('>Summary</button>'));
  for(const retired of['summary','activity']){await h.click({adminScreen:retired});assert.equal(h.run('screen'),'tasks');assert.ok(!/Load sample performance|Performance|View activity log/.test(h.html()));}
  await h.click({adminScreen:'feedback'});await h.click({action:'sample-feedback'});await h.click({action:'summarize-feedback'});assert.equal(h.run('screen'),'feedback-summary');assert.ok(h.html().includes('reusable stethoscopes'));await h.click({adminScreen:'settings'});assert.ok(h.html().includes('Default floor instructions'));
+});
+
+test('demo menu starts in Bold with an accessible colour toggle',()=>{
+ const h=harness();assert.equal(h.document.documentElement.dataset.colourScheme,'bold');assert.equal(h.document.themeMeta.content,'#e8eef5');assert.ok(h.html().includes('Colour scheme'));assert.match(h.html(),/id="bold-colours"[^>]*role="switch"[^>]*aria-label="Use bold colours"[^>]*checked/);assert.equal(h.nodes.get('bold-colours').checked,true);
+ const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');assert.ok(html.indexOf('href="./bold.css"')>html.indexOf('href="./style.css"'));assert.ok(fs.existsSync(path.join(ROOT,'bold.css')));
+});
+test('switching colour schemes updates the whole app without resetting requests, assignments or feedback',async()=>{
+ const h=harness();await worker(h);await start(h);h.run('simulation=Domain.transact(simulation,"report",{reporter_role:"nurse",job_id:"J001",description:"Keep the reusable stethoscope."});state=Domain.snapshot(simulation);');
+ await h.click({action:'main-menu'});const original=h.run('JSON.stringify(simulation)'),control=h.nodes.get('bold-colours');control.focus();await h.change('bold-colours',false);assert.equal(h.document.documentElement.dataset.colourScheme,'original');assert.equal(h.document.themeMeta.content,'#153f3b');assert.equal(h.nodes.get('colour-scheme-name').textContent,'Original (v0.14)');assert.equal(h.document.activeElement,control);assert.equal(h.nodes.get('bold-colours'),control);assert.equal(h.run('JSON.stringify(simulation)'),original);
+ for(const role of ['nurse','evs','admin']){await h.click({demo:role});assert.equal(h.document.documentElement.dataset.colourScheme,'original');assert.equal(h.run('state.jobs[0].status'),'cleaning');assert.equal(h.run('state.reports.length'),1);}
+ await h.click({action:'main-menu'});assert.equal(h.nodes.get('bold-colours').checked,false);assert.ok(h.html().includes('Original (v0.14)'));await h.change('bold-colours',true);assert.equal(h.document.documentElement.dataset.colourScheme,'bold');assert.equal(h.nodes.get('colour-scheme-name').textContent,'Bold');assert.equal(h.run('JSON.stringify(simulation)'),original);
+});
+test('the scheme toggle stays on the main menu and a new page starts in Bold again',async()=>{
+ const a=harness();await a.change('bold-colours',false);await a.click({demo:'nurse'});assert.ok(!a.html().includes('id="bold-colours"'));await a.click({action:'main-menu'});assert.equal(a.nodes.get('bold-colours').checked,false);const b=harness();assert.equal(b.nodes.get('bold-colours').checked,true);assert.equal(b.document.documentElement.dataset.colourScheme,'bold');
 });

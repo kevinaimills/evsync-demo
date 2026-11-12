@@ -4,6 +4,7 @@ let simulation = null;
 let state = null;
 let role = 'menu';
 let screen = 'menu';
+let colourScheme = 'bold';
 let selectedRoom = null;
 let editingJob = null;
 let requestConfirmation = null;
@@ -191,8 +192,15 @@ function ensureAvailabilityVisible() {
   });
 }
 
+function applyColourScheme() {
+  const bold=colourScheme==='bold';
+  document.documentElement.dataset.colourScheme=colourScheme;
+  const toggle=$('#bold-colours');if(toggle)toggle.checked=bold;
+  const label=$('#colour-scheme-name');if(label)label.textContent=bold?'Bold':'Original (v0.14)';
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',bold?'#e8eef5':'#153f3b');
+}
 function mainMenuView() {
-  return `<div class="app-content"><div class="demo-options"><button class="demo-option" data-demo="nurse"><span>Nurse Demo</span>${icon('back',20)}</button><button class="demo-option" data-demo="evs"><span>EVS Worker Demo</span>${icon('back',20)}</button><button class="demo-option" data-demo="admin"><span>EVS Admin Demo</span>${icon('back',20)}</button></div></div>`;
+  return `<div class="app-content"><div class="demo-options"><button class="demo-option" data-demo="nurse"><span>Nurse Demo</span>${icon('back',20)}</button><button class="demo-option" data-demo="evs"><span>EVS Worker Demo</span>${icon('back',20)}</button><button class="demo-option" data-demo="admin"><span>EVS Admin Demo</span>${icon('back',20)}</button></div><label class="theme-setting" for="bold-colours"><span class="theme-label"><strong>Colour scheme</strong><span id="colour-scheme-name">${colourScheme==='bold'?'Bold':'Original (v0.14)'}</span></span><span class="switch-control"><input id="bold-colours" type="checkbox" role="switch" aria-label="Use bold colours" aria-describedby="colour-scheme-name" ${colourScheme==='bold'?'checked':''}><span aria-hidden="true"></span></span></label></div>`;
 }
 function taskSummary(job,includePPE=false,admin=false) {
   const room=roomFor(job);
@@ -432,6 +440,7 @@ document.addEventListener('click',async(e)=>{
 });
 document.addEventListener('change',async(e)=>{
   const el=e.target;
+  if(el.id==='bold-colours'){colourScheme=el.checked?'bold':'original';applyColourScheme();return;}
   if(el.id==='unit-filter'){roomUnit=el.value;renderRoomList();}
   if(el.id==='ppe-confirmed')updateStartButton();
   if(el.id==='availability-option'){updateAvailabilityFields();if(el.value==='custom')ensureAvailabilityVisible();}
@@ -498,6 +507,7 @@ if (typeof window !== 'undefined') {
   window.visualViewport?.addEventListener('resize', fitViewport);
 }
 function initialize() {
+  applyColourScheme();
   simulation = Domain.newState();
   state = Domain.snapshot(simulation);
   render();
