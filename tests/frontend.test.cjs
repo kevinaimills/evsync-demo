@@ -444,10 +444,10 @@ test('EVS Report opens the general/specific menu and returns to the originating 
  const h=harness();await h.click({demo:'evs'});await h.click({action:'begin-report'});assert.equal(h.run('screen'),'report-menu');assert.ok(h.html().includes('Report an issue with a specific job'));await h.click({action:'report-general'});await input(h,'report-description','An EVS concern.');await h.click({action:'report-back'});assert.equal(h.run('screen'),'report-menu');await h.click({action:'report-specific'});assert.equal(h.run('screen'),'report-picker');await h.click({action:'report-back'});await h.click({action:'report-back'});assert.equal(h.run('screen'),'tasks');assert.equal(h.run('role'),'evs');
 });
 
-test('new requests confirm success above details and both Back controls return to the originating Nurse list',async()=>{
+test('new requests show a clear receipt and a primary return action for the originating Nurse list',async()=>{
  for(const origin of ['rooms','requests']){
-  const h=harness();await h.click({demo:'nurse'});await h.click({screen:origin});await h.click({action:'new-request'});await h.submit(requestFields());assert.equal(h.run('screen'),'detail');assert.match(h.html(),/class="request-confirmation" role="status">[\s\S]*?<span>Job requested!<\/span><\/p>/);assert.ok(h.html().indexOf('Job requested!')<h.html().indexOf('detail-grid'));assert.ok(h.html().includes('Go back to main menu'));
-  const backs=[...h.html().matchAll(/class="back-button" data-screen="([^"]+)"/g)].map(m=>m[1]);assert.deepEqual(backs,[origin,origin]);assert.ok(h.html().indexOf('Go back to main menu')>h.html().indexOf('>Cancel</button>'));assert.equal(h.run('state.jobs.length'),2);
+  const h=harness();await h.click({demo:'nurse'});await h.click({screen:origin});await h.click({action:'new-request'});await h.submit(requestFields());assert.equal(h.run('screen'),'detail');assert.match(h.html(),/class="request-success" role="status" aria-labelledby="request-success-title"/);assert.match(h.html(),/<h2 id="request-success-title">Job requested!<\/h2>/);assert.ok(h.html().indexOf('Job requested!')<h.html().indexOf('request-receipt"'));assert.ok(h.html().includes('Room 4100'));assert.ok(h.html().includes('Basic · 20 min'));assert.ok(h.html().includes('No PPE required'));assert.ok(!/Awaiting worker|Awaiting assignment|Estimated finish/.test(h.html()));
+  assert.match(h.html(),new RegExp('class="primary full" data-screen="'+origin+'">Go back to main menu</button>'));assert.match(h.html(),new RegExp('class="back-button" data-screen="'+origin+'"'));assert.ok(h.html().indexOf('Go back to main menu')>h.html().indexOf('>Cancel</button>'));assert.equal(h.run('state.jobs.length'),2);
   await h.click({screen:origin});await h.click({room:'4100'});assert.ok(!h.html().includes('Job requested!'));await h.click({action:'edit-request',job:'J002'});await h.submit(requestFields({notes:'An updated instruction.'}));assert.ok(!h.html().includes('Job requested!'));assert.equal(h.run('state.jobs.length'),2);
  }
 });
@@ -479,4 +479,33 @@ test('switching colour schemes updates the whole app without resetting requests,
 });
 test('the scheme toggle stays on the main menu and a new page starts in Bold again',async()=>{
  const a=harness();await a.change('bold-colours',false);await a.click({demo:'nurse'});assert.ok(!a.html().includes('id="bold-colours"'));await a.click({action:'main-menu'});assert.equal(a.nodes.get('bold-colours').checked,false);const b=harness();assert.equal(b.nodes.get('bold-colours').checked,true);assert.equal(b.document.documentElement.dataset.colourScheme,'bold');
+});
+
+test('confirmation keeps urgent scheduled work, PPE and optional notes clear and editable',async()=>{
+ const h=harness();await h.click({demo:'nurse'});await h.click({room:'4100'});await h.submit(requestFields({priority:'urgent',cleaning_class:'extra',ppe:['Gloves','Gown'],availability_option:'15',notes:'Retain the monitor. <img src=x onerror=alert(1)>'}));
+ assert.ok(h.html().includes('confirmation-priority">Urgent'));assert.ok(h.html().includes('Extra · 30 min'));assert.ok(h.html().includes('Gloves, Gown'));assert.ok(h.html().includes('From 06:15, 05/30'));assert.match(h.html(),/<details class="receipt-instructions"><summary>Additional instructions<\/summary>/);assert.ok(h.html().includes('&lt;img'));assert.ok(!h.html().includes('<img src=x'));assert.equal(h.run('state.jobs[1].status'),'queued');assert.equal(h.run('state.rooms.find(r=>r.id==="4100").last_cleaned_at'),null);
+ await h.click({action:'edit-request',job:'J002'});assert.ok(h.nodes.get('nurse-note').value.includes('Retain the monitor.'));assert.equal(h.run('state.jobs.length'),2);
+});
+test('assigned confirmation shows a real forecast and employee while queued receipts omit unknown data',async()=>{
+ const h=harness();await adminSettings(h);await h.change('auto-assign',true);await h.click({demo:'nurse'});await h.click({room:'4100'});await h.submit(requestFields());assert.equal(h.run('state.jobs[1].status'),'assigned');assert.ok(h.html().includes('Estimated finish'));assert.ok(h.html().includes('data-estimate="J002"'));assert.ok(h.html().includes('Assigned to EVS worker 1'));assert.ok(h.html().includes('Job requested!'));assert.ok(!/Awaiting worker|Awaiting assignment/.test(h.html()));
+});
+test('confirmation Cancel still withdraws the exact new request without changing another job',async()=>{
+ const h=harness();await h.click({demo:'nurse'});await h.click({room:'4100'});await h.submit(requestFields());await h.click({action:'cancel-request',job:'J002'});assert.equal(h.run('state.jobs[1].status'),'queued');await h.click({action:'confirm-cancel',job:'J002'});assert.equal(h.run('screen'),'rooms');assert.equal(h.run('state.jobs[1].status'),'cancelled');assert.equal(h.run('state.jobs[0].status'),'queued');assert.equal(h.run('state.rooms.find(r=>r.id==="4100").last_cleaned_at'),null);
+});
+
+test('existing Nurse jobs use the same primary full-width return footer in either colour scheme',async()=>{
+ for(const bold of [true,false])for(const origin of ['rooms','requests']){
+  const h=harness();await h.change('bold-colours',bold);await h.click({demo:'nurse'});await h.click({screen:origin});await h.click({room:'2150'});assert.equal(h.run('screen'),'detail');assert.ok(!h.html().includes('Job requested!'));
+  assert.match(h.html(),new RegExp('<div class="app-bottom confirmation-return"><button class="primary full" data-screen="'+origin+'">Go back to main menu</button></div>'));assert.match(h.html(),new RegExp('class="back-button" data-screen="'+origin+'"'));assert.ok(h.html().indexOf('Go back to main menu')>h.html().indexOf('>Cancel</button>'));
+  await h.click({screen:origin});assert.equal(h.run('screen'),origin);assert.equal(h.run('state.jobs[0].status'),'queued');assert.equal(h.run('state.jobs.length'),1);
+ }
+});
+test('assignment labels are consistent across roles and the one-step cleaning workflow is retained',async()=>{
+ const h=harness();h.seed([{room_id:'2150',ppe:['Gloves']},{room_id:'4100'}]);await h.click({demo:'admin'});assert.match(h.html(),/badge queued">Requested/);await h.click({adminTask:'J001'});await h.click({action:'choose-employee',job:'J001'});await h.click({assignWorker:'maya'});assert.equal(h.run('state.jobs[0].status'),'assigned');assert.match(h.html(),/badge assigned">Assigned/);assert.match(h.html(),/badge queued">Requested/);assert.ok(h.html().includes('class="ppe-chip ppe-emphasis">Gloves'));
+ await h.click({adminTask:'J001'});assert.match(h.html(),/badge assigned">Assigned/);assert.ok(h.html().includes('class="ppe-chip ppe-emphasis">Gloves'));
+ await h.click({demo:'nurse'});assert.ok(h.rooms().includes('aria-label="Room 2150, Assigned"'));assert.match(h.rooms(),/badge assigned">Assigned/);await h.click({room:'2150'});assert.match(h.html(),/badge assigned">Assigned/);assert.ok(!h.html().includes('ppe-emphasis'));await h.click({screen:'requests'});assert.match(h.html(),/badge assigned">Assigned/);await h.click({action:'begin-report',job:'J001'});assert.match(h.html(),/badge assigned">Assigned/);
+ await h.click({demo:'evs'});assert.match(h.html(),/badge assigned">Assigned/);assert.ok(h.html().includes('class="ppe-chip ppe-emphasis">Gloves'));await h.click({task:'J001'});assert.match(h.html(),/badge assigned">Assigned/);assert.equal(h.nodes.get('start-job').disabled,true);await h.click({action:'start',job:'J001'});assert.equal(h.run('state.jobs[0].status'),'assigned');await start(h);assert.equal(h.run('state.jobs[0].status'),'cleaning');assert.match(h.html(),/badge cleaning">Cleaning/);await h.click({action:'release-job',job:'J001'});assert.equal(h.run('state.jobs[0].status'),'queued');assert.match(h.html(),/badge queued">Requested/);
+});
+test('jobs without PPE retain neutral no-PPE text in Worker and Admin views',async()=>{
+ const h=harness();await h.click({demo:'evs'});assert.ok(h.html().includes('No PPE required'));assert.ok(!h.html().includes('ppe-emphasis'));await h.click({task:'J001'});assert.ok(h.html().includes('No PPE required'));assert.ok(!h.html().includes('ppe-emphasis'));await h.click({demo:'admin'});assert.ok(!h.html().includes('ppe-emphasis'));await h.click({adminTask:'J001'});assert.ok(h.html().includes('No PPE required'));assert.ok(!h.html().includes('ppe-emphasis'));
 });

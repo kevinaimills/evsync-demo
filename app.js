@@ -44,7 +44,7 @@ const now = () => state.settings.now;
 const jobForRoom = (id) => state.jobs.find(j => j.room_id === id && ['queued','assigned','cleaning'].includes(j.status));
 const workerFor = (j) => state.workers.find(w => w.id === j?.worker_id);
 const roomFor = (j) => state.rooms.find(r => r.id === j?.room_id);
-const label = (status) => ({requested:'Requested',queued:'Requested',assigned:'Requested',cleaning:'Cleaning',cleaned:'Cleaned',complete:'Cleaned',unknown:''}[status] || '');
+const label = (status) => ({requested:'Requested',queued:'Requested',assigned:'Assigned',cleaning:'Cleaning',cleaned:'Cleaned',complete:'Cleaned',unknown:''}[status] || '');
 const badge = (status) => label(status) ? `<span class="badge ${status==='complete'?'cleaned':esc(status)}">${label(status)}</span>` : '';
 
 const iconPaths = {
@@ -101,7 +101,7 @@ function appHeader() {
     return `<header class="app-header">${back?`<div class="header-title"><button class="back-button" data-screen="${back}">${icon('back')} Back</button><h1>${titles[screen]}</h1></div>`:`<h1>${titles[screen]||'EVS Admin'}</h1>`}</header>`;
   }
   if(role==='evs')return `<header class="app-header">${screen==='task'?`<button class="back-button" data-back-tasks>${icon('back')} Back</button><span class="identity-label">${currentWorkerName()}</span>`:`<h1>Tasks</h1><select id="demo-worker" class="demo-worker-select" aria-label="EVS worker demo">${state.workers.map(w=>`<option value="${w.id}" ${w.id===selectedWorker?'selected':''}>${w.name}</option>`).join('')}</select>`}${reportHeaderButton()}</header>`;
-  const title=screen==='edit'?'Edit request':screen==='form'?'Request cleaning':screen==='detail'?`Room ${selectedRoom}`:screen==='requests'?'My requests':'Rooms';
+  const title=screen==='edit'?'Edit request':screen==='form'?'Request cleaning':screen==='detail'?(requestConfirmation===jobForRoom(selectedRoom)?.id?'Request sent':`Room ${selectedRoom}`):screen==='requests'?'My requests':'Rooms';
   const back=['form','edit','detail'].includes(screen),report=!['form','edit'].includes(screen);
   return `<header class="app-header ${back?'':'nurse-list-header'}">${back?`<div class="header-title"><button class="back-button" data-screen="${screen==='edit'?'detail':nurseList}">${icon('back')} Back</button><h1>${title}</h1></div>`:`<h1 class="screen-title"><span class="title-mark" aria-hidden="true">${icon(screen==='requests'?'list':'rooms',23)}</span><span>${title}</span></h1>`}${report?reportHeaderButton(screen==='detail'?jobForRoom(selectedRoom):null):''}</header>`;
 }
@@ -119,13 +119,13 @@ function roomFilters() {
   return filters.map(([id,text]) => `<button data-filter="${id}" class="${id === statusFilter ? 'selected' : ''}" aria-pressed="${id === statusFilter}">${text} ${baseRooms().filter(r => matchesStatus(r,id)).length}</button>`).join('');
 }
 function roomCard(room) {
-  const job=jobForRoom(room.id),status=roomStatus(room);
+  const job=jobForRoom(room.id),status=roomStatus(room),displayStatus=job?.status==='assigned'?'assigned':status;
   if(status==='cleaned'){
     const completed=latestCleanedJob(room.id);
     return `<article class="room-card cleaned-room-card"><button class="cleaned-room-link" data-room="${room.id}" aria-label="Room ${room.id}, ${cleanedOn(room.last_cleaned_at)}"><span class="room-info"><strong>Room ${room.id}</strong><small>${room.unit}</small></span><span class="room-state"><small class="cleaned-on">${cleanedStamp(room.last_cleaned_at)}</small></span></button><div class="cleaned-action"><button class="report-issue-muted" data-action="begin-report" data-job="${completed.id}" aria-label="Report an issue with Room ${room.id}">Report an issue</button></div></article>`;
   }
   const eta=job?.estimated_finish!=null?`<small class="eta" data-estimate="${job.id}" data-estimate-prefix="Est. finish ">Est. finish ${estimate(job)}</small>`:'';
-  return `<button class="room-card" data-room="${room.id}" aria-label="Room ${room.id}${label(status)?', '+label(status):''}"><span class="room-info"><strong>Room ${room.id}</strong><small>${room.unit}</small>${job?.priority==='urgent'?'<small class="priority-label">Urgent</small>':''}</span>${status==='unknown'?'':`<span class="room-state">${badge(status)}${job?.availability_mode==='later'?`<small class="availability-card">From ${dateTime(job.available_from)}</small>`:''}${eta}</span>`}</button>`;
+  return `<button class="room-card" data-room="${room.id}" aria-label="Room ${room.id}${label(displayStatus)?', '+label(displayStatus):''}"><span class="room-info"><strong>Room ${room.id}</strong><small>${room.unit}</small>${job?.priority==='urgent'?'<small class="priority-label">Urgent</small>':''}</span>${status==='unknown'?'':`<span class="room-state">${badge(displayStatus)}${job?.availability_mode==='later'?`<small class="availability-card">From ${dateTime(job.available_from)}</small>`:''}${eta}</span>`}</button>`;
 }
 
 function filteredRooms() {
@@ -147,9 +147,12 @@ function nurseRequests() {
   return `<div class="app-content"><div class="segmented" role="group" aria-label="My request status"><button data-request-tab="active" class="${requestsTab==='active'?'selected':''}">Active ${active}</button><button data-request-tab="completed" class="${requestsTab==='completed'?'selected':''}">Completed</button></div><div class="request-list">${jobs.map(j=>`<article class="my-request-card">${j.status==='complete'?`<div class="my-request-body"><span class="room-info"><strong>Room ${j.room_id}</strong><small>${roomFor(j).unit}</small><small>Cleaned by ${esc(workerFor(j)?.name||'EVS')}</small></span><span class="room-state"><small class="cleaned-on">${cleanedStamp(j.completed_at)}</small><button class="report-issue-muted" data-action="begin-report" data-job="${j.id}">Report an issue</button></span></div>`:`<button class="my-request-body" data-room="${j.room_id}"><span class="room-info"><strong>Room ${j.room_id}</strong><small>${roomFor(j).unit} · ${state.classes[j.cleaning_class].label}</small>${j.priority==='urgent'?'<small class="priority-label">Urgent</small>':''}</span><span class="room-state">${badge(j.status)}${j.estimated_finish!=null?`<small data-estimate="${j.id}" data-estimate-prefix="Est. finish ">Est. finish ${estimate(j)}</small>`:''}</span></button><div class="request-card-actions"><button class="text-button" data-action="edit-request" data-job="${j.id}">Edit</button><button class="text-button" data-action="begin-report" data-job="${j.id}">Report an issue</button></div>`}</article>`).join('')||`<p class="filter-empty">No ${requestsTab==='active'?'active':'completed'} requests.</p>`}</div></div><div class="app-bottom"><button class="primary full" data-action="new-request">${icon('plus')} Request cleaning</button></div>${nurseNav()}`;
 }
 
+function ppeChip(p) {
+  return `<span class="ppe-chip${['evs','admin'].includes(role)?' ppe-emphasis':''}">${esc(p)}</span>`;
+}
 function ppeChips(job) {
   if(!job.ppe.length)return '<p class="supporting-text">No PPE required</p>';
-  return `<div class="ppe-chips">${job.ppe.map(p => `<span class="ppe-chip">${esc(p)}</span>`).join('')}</div>`;
+  return `<div class="ppe-chips">${job.ppe.map(ppeChip).join('')}</div>`;
 }
 function requestDetails(job) {
   const historical=job.status==='complete'&&job.instructions_at_start!==null;
@@ -157,9 +160,17 @@ function requestDetails(job) {
   return `<section class="info-block"><h2>Required PPE</h2>${ppeChips(job)}</section>${text?`<section class="info-block instructions-note ${highlight?'feedback-reminder':''}"><h2>${role==='nurse'?'Additional instructions':historical?'Instructions at cleaning start':'Instructions'}</h2><p>${esc(text)}</p></section>`:''}`;
 }
 
+function nurseReturnFooter() {
+  return `<div class="app-bottom confirmation-return"><button class="primary full" data-screen="${nurseList}">Go back to main menu</button></div>`;
+}
+function nurseRequestConfirmation(job) {
+  const room=roomFor(job),worker=workerFor(job);
+  return `<div class="app-content request-receipt-content"><section class="request-success" role="status" aria-labelledby="request-success-title"><span class="request-success-mark">${icon('check',36)}</span><div><h2 id="request-success-title">Job requested!</h2></div></section><section class="request-receipt" aria-label="Requested job"><div class="receipt-heading"><div><h3>Room ${job.room_id}</h3><p>${room.unit}</p></div>${job.priority==='urgent'?'<span class="confirmation-priority">Urgent</span>':''}</div><dl class="receipt-facts"><div><dt>Available</dt><dd>${esc(availabilityText(job))}</dd></div><div><dt>Cleaning</dt><dd>${state.classes[job.cleaning_class].label} · ${expectedTime(job)}</dd></div><div><dt>PPE</dt><dd>${job.ppe.length?job.ppe.map(esc).join(', '):'No PPE required'}</dd></div>${job.estimated_finish!=null?`<div><dt>Estimated finish</dt><dd class="receipt-eta" data-estimate="${job.id}">${estimate(job)}</dd></div>`:''}</dl>${worker?`<p class="receipt-worker">Assigned to ${esc(worker.name)}</p>`:''}</section>${job.notes?`<details class="receipt-instructions"><summary>Additional instructions</summary><p>${esc(job.notes)}</p></details>`:''}<div class="paired-actions receipt-edit-actions"><button class="secondary" data-action="edit-request" data-job="${job.id}">Edit</button><button class="danger-btn" data-action="cancel-request" data-job="${job.id}">Cancel</button></div></div>${nurseReturnFooter()}${nurseNav()}`;
+}
 function nurseDetail() {
-  const room=state.rooms.find(r=>r.id===selectedRoom),job=jobForRoom(room.id),status=roomStatus(room),worker=workerFor(job);
-  return `<div class="app-content">${job&&requestConfirmation===job.id?`<p class="request-confirmation" role="status">${icon('check',20)}<span>Job requested!</span></p>`:''}<p class="meta-line"><span>${room.unit}</span>${badge(status)}</p>${job?`<dl class="detail-grid"><dt>Estimated finish</dt><dd class="estimate-value" data-estimate="${job.id}">${estimate(job)}</dd>${availabilityRow(job)}<dt>Worker</dt><dd>${worker?esc(worker.name):'Awaiting assignment'}</dd><dt>Cleaning</dt><dd>${state.classes[job.cleaning_class].label}</dd><dt>Priority</dt><dd>${job.priority==='urgent'?'Urgent':'Routine'}</dd></dl>${requestDetails(job)}<div class="paired-actions"><button class="secondary" data-action="edit-request" data-job="${job.id}">Edit</button><button class="danger-btn" data-action="cancel-request" data-job="${job.id}">Cancel</button></div><div class="detail-return"><button class="back-button" data-screen="${nurseList}">${icon('back')} Go back to main menu</button></div>`:status==='cleaned'?`<p class="last-cleaned">${cleanedStamp(room.last_cleaned_at)}</p>`:''}</div>${!job?`<div class="app-bottom"><button class="primary full" data-action="new-request" data-room-id="${room.id}">Request cleaning</button></div>`:''}${nurseNav()}`;
+  const room=state.rooms.find(r=>r.id===selectedRoom),job=jobForRoom(room.id),status=roomStatus(room),displayStatus=job?.status==='assigned'?'assigned':status,worker=workerFor(job);
+  if(job&&requestConfirmation===job.id)return nurseRequestConfirmation(job);
+  return `<div class="app-content"><p class="meta-line"><span>${room.unit}</span>${badge(displayStatus)}</p>${job?`<dl class="detail-grid"><dt>Estimated finish</dt><dd class="estimate-value" data-estimate="${job.id}">${estimate(job)}</dd>${availabilityRow(job)}<dt>Worker</dt><dd>${worker?esc(worker.name):'Awaiting assignment'}</dd><dt>Cleaning</dt><dd>${state.classes[job.cleaning_class].label}</dd><dt>Priority</dt><dd>${job.priority==='urgent'?'Urgent':'Routine'}</dd></dl>${requestDetails(job)}<div class="paired-actions"><button class="secondary" data-action="edit-request" data-job="${job.id}">Edit</button><button class="danger-btn" data-action="cancel-request" data-job="${job.id}">Cancel</button></div>`:status==='cleaned'?`<p class="last-cleaned">${cleanedStamp(room.last_cleaned_at)}</p>`:''}</div>${job?nurseReturnFooter():`<div class="app-bottom"><button class="primary full" data-action="new-request" data-room-id="${room.id}">Request cleaning</button></div>`}${nurseNav()}`;
 }
 
 function requestForm() {
@@ -204,7 +215,7 @@ function mainMenuView() {
 }
 function taskSummary(job,includePPE=false,admin=false) {
   const room=roomFor(job);
-  return `<span class="task-title-row"><strong>Room ${room.id}</strong>${badge(job.status)}</span><span class="task-meta">${room.unit} · ${state.classes[job.cleaning_class].label}</span>${scheduledLabel(job)}${job.priority==='urgent'?'<span class="task-urgency">Urgent</span>':''}${includePPE?`<span class="task-ppe">${job.ppe.length?job.ppe.map(p=>`<span class="ppe-chip">${esc(p)}</span>`).join(''):'<span>No PPE required</span>'}</span>`:''}${admin?`<span class="task-owner">${esc(workerFor(job)?.name||'Unassigned')}</span>`:''}`;
+  return `<span class="task-title-row"><strong>Room ${room.id}</strong>${badge(job.status)}</span><span class="task-meta">${room.unit} · ${state.classes[job.cleaning_class].label}</span>${scheduledLabel(job)}${job.priority==='urgent'?'<span class="task-urgency">Urgent</span>':''}${includePPE?`<span class="task-ppe">${job.ppe.length?job.ppe.map(ppeChip).join(''):'<span>No PPE required</span>'}</span>`:''}${admin?`<span class="task-owner">${esc(workerFor(job)?.name||'Unassigned')}</span>`:''}`;
 }
 function evsView() {
   const tasks=Domain.requestedTasks(state),current=tasks.find(j=>j.status==='cleaning'),pending=tasks.filter(j=>j.status!=='cleaning');
@@ -486,7 +497,7 @@ document.addEventListener('submit',async(e)=>{
     }
     else if(option!=='now'){const offset=Number(option);payload.available_from=[15,30,45,60].includes(offset)?Date.now()+offset*Domain.MINUTE:NaN;}
   }
-  if(await mutate(editing?'edit':'request',payload,editing?'Request updated':'Request sent')){selectedRoom=roomId;requestConfirmation=editing?null:jobForRoom(roomId)?.id;editingJob=null;navigate('detail');render();}
+  if(await mutate(editing?'edit':'request',payload,editing?'Request updated':'Request sent')){selectedRoom=roomId;requestConfirmation=editing?null:jobForRoom(roomId)?.id;editingJob=null;navigate('detail');}
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape')closeModal();const modal=$('.modal');if(modal&&e.key==='Tab'){

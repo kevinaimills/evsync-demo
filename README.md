@@ -1,4 +1,4 @@
-# EVSync v0.16
+# EVSync v0.18
 
 A static classroom prototype with Nurse, EVS Worker, and EVS Admin demos. It runs in a browser, including on a phone. No application server, database, account, package installation, or build step is needed.
 
@@ -40,17 +40,19 @@ The 62 rooms are Cardiology **4100–4120**, Oncology **4121–4140**, and Pedia
 
 ## Nurse requests and reports
 
-A room without active work opens directly in the request form. Sending a new request shows **Job requested!** above the job details. **Go back to main menu**, below Edit / Cancel, returns to the same Nurse list as the header Back button. Editing an existing request does not repeat the new-request confirmation. Choose **Basic (20 min)** or **Extra (30 min)**; PPE is optional. Additional instructions are appended to the unit's floor instructions shown to EVS.
+A room without active work opens directly in the request form. Sending a new request opens a dedicated confirmation with a large checkmark and **Job requested!** heading. A compact receipt shows the room, availability, cleaning level and PPE. An estimated finish and assigned employee appear only when known. Long additional instructions are expandable. **Edit / Cancel** remain secondary actions; the full-width green **Go back to main menu** button stays visible beneath the scrollable content and returns to the same Nurse list as the header Back button. Editing an existing request does not repeat the new-request confirmation. Choose **Basic (20 min)** or **Extra (30 min)**; PPE is optional. Additional instructions are appended to the unit's floor instructions shown to EVS.
 
 Availability choices are **Now**, **In 15 / 30 / 45 / 60 minutes**, and **Choose date/time…**. Relative choices are calculated at submission. Editing preserves the stored absolute time, including seconds. There is no end time or expiry. A custom field scrolls into view only when necessary and keeps the availability selector visible.
 
-Active jobs have **Edit / Cancel**. Nurses can revise urgency, notes, PPE, cleaning level, and availability before cleaning starts. **My requests → Completed** shows the worker and cleaning date/time with a direct issue-report button. Completed work has no notification badge, completion counter, or prompt; nurses can check the history when needed.
+Existing active job details use the same full-width green return footer as the new-request confirmation. Active jobs have **Edit / Cancel**. Nurses can revise urgency, notes, PPE, cleaning level, and availability before cleaning starts. **My requests → Completed** shows the worker and cleaning date/time with a direct issue-report button. Completed work has no notification badge, completion counter, or prompt; nurses can check the history when needed.
 
 The general **Report** entry point has two buttons: **Report a general issue** and **Report an issue with a specific job**. The general option opens the text form with an optional unit. The specific-job option opens the room/job picker, listing open work orders and recently cleaned work; search also finds rooms without a job. Nurse report buttons attached to a job still go straight to its prefilled form. Back follows the selected branch and retains the draft. The form has one free-text **What is the problem?** field. Reporting does not create cleaning work or change room status. The EVS header Report button always opens the two-choice menu, including while viewing or cleaning a task; it never silently selects that task. Sending a report returns to the originating EVS screen.
 
 ## Worker assignments and estimates
 
 Workers are named **EVS worker 1–4**. The worker selector switches the simulated employee within the same session. Shared requested work and that employee's assignments are visible; another employee's assignments are hidden. The current cleaning is pinned first. Waiting work is urgent first, with available work before future work within each priority, then availability time and request age.
+
+Job badges read **Requested** while unassigned, **Assigned** after allocation to an employee, and **Cleaning** after the worker starts. The labels are consistent in room lists, task cards, job details, and reports. Assigned work still uses the same **Start cleaning now** action and PPE/instructions confirmation.
 
 Admin can assign or reassign unstarted jobs. Assigned jobs show **Change assignment**. Choosing an employee returns to the main assignments overview. **Available workers** excludes employees currently cleaning, even if they have queued assignments. **All workers** includes everyone, so work can be queued behind an active cleaning. Employees without the required PPE coverage cannot be selected. Cleaning already in progress cannot be reassigned.
 
@@ -82,11 +84,13 @@ Every writing field has **Dictate**: reports, additional instructions, floor ins
 
 Admin navigation is **Tasks / Feedback / Settings**. The Summary / Performance section and its activity-log and sample-performance controls are omitted from this version. Feedback still has **Summarize displayed reports** and source-report review.
 
-**Original (v0.14)** preserves the previous restrained palette: green actions, pale blue notifications, amber requested work and precautions, and soft red urgency accents.
+**Original (v0.14)** uses the restrained base palette with current status and PPE updates: green actions, pale blue notifications, amber requested work and precautions, and soft red urgency accents.
 
 **Bold** uses light blue-grey top bars, navy task headings, teal primary actions, brighter blue selections and Cleaning badges, and stronger coral and amber status accents. The header has a 4 px gap beneath it, with light controls and dark labels for a quieter top edge. The desktop status bar and mobile browser colour match the lighter header. White cards sit on a cool background. Urgent task details receive a coral heading, while list cards retain a softer coral tint. Notifications keep their flat blue treatment and checkmark so they remain distinct from buttons.
 
-The original stylesheet is retained; the bold overrides are isolated in **bold.css** and only apply while Bold is selected. Labels, workflow controls, text sizes, and touch targets are preserved. Colour is never the sole status indicator.
+In both schemes, assigned badges are pale blue and required PPE chips in EVS Worker and Admin views use a restrained rose-red tint, distinct from amber requested-work badges and room instructions. No-PPE messages remain neutral.
+
+The original stylesheet is retained; the bold overrides are isolated in **bold.css** and only apply while Bold is selected. The colour toggle changes appearance without changing the screen layout, workflow or touch targets. Colour is never the sole status indicator.
 
 ## GitHub Pages and source
 
@@ -105,4 +109,4 @@ With Node 18+:
 node --test tests/*.test.cjs
 ```
 
-All **152 checks pass**. Frontend checks use a small DOM adapter and viewport geometry fixtures, not a rendered browser. The bold palette's text/background pairs, including the lighter header and its controls, were checked for contrast. A byte comparison also confirmed the v0.14 base stylesheet is preserved. Visual verification was unavailable because the managed preview service was unavailable.
+All **158 checks pass**. Frontend checks use a small DOM adapter and viewport geometry fixtures, not a rendered browser. The bold palette's text/background pairs, including the lighter header and its controls, were checked for contrast. A byte comparison also confirmed the v0.14 base stylesheet is preserved. Visual verification was unavailable because the managed preview service was unavailable.

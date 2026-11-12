@@ -366,3 +366,33 @@ details[open]>summary { margin-bottom:9px; }
 .theme-setting .switch-control>span { position:absolute; top:8px; width:48px; }
 .theme-setting .switch-control>span::before { top:4px; }
 .theme-setting .switch-control input:checked+span::before { transform:translateX(20px); }
+
+/* A completed request has its own receipt and one clear next action. */
+.request-success { display:flex; align-items:center; gap:13px; padding:12px 0 19px; margin:0 0 16px; border-bottom:1px solid var(--line); }
+.request-success-mark { display:flex; align-items:center; justify-content:center; flex:none; width:52px; height:52px; border-radius:50%; background:var(--info-bg); color:var(--info-ink); }
+.request-success h2 { font-size:28px; line-height:1.2; letter-spacing:-.65px; font-weight:700; }
+.request-receipt { padding:15px; border:1px solid var(--line); border-radius:13px; background:white; }
+.receipt-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding-bottom:13px; }
+.receipt-heading h3 { font-size:22px; line-height:1.25; letter-spacing:-.35px; font-weight:650; }
+.receipt-heading p { color:var(--muted); font-size:14px; margin-top:4px; }
+.confirmation-priority { display:inline-flex; flex:none; padding:4px 8px; border:1px solid #e5c7c1; border-radius:7px; color:var(--urgent-ink); background:var(--urgent-bg); font-size:12px; font-weight:650; }
+.receipt-facts { margin:0; }
+.receipt-facts>div { display:grid; grid-template-columns:96px minmax(0,1fr); gap:10px; padding:10px 0; border-top:1px solid var(--line); }
+.receipt-facts dt { color:var(--muted); font-size:14px; }
+.receipt-facts dd { margin:0; color:var(--ink); font-size:15px; font-weight:600; text-align:right; overflow-wrap:anywhere; }
+.receipt-facts .receipt-eta { color:var(--info-ink); }
+.receipt-worker { margin-top:4px; font-size:13px; color:var(--muted); }
+.receipt-instructions { margin:13px 0 0; border-bottom:1px solid var(--line); }
+.receipt-instructions>summary { color:var(--green); font-size:14px; font-weight:600; }
+.receipt-instructions>p { margin:0 0 14px; white-space:pre-line; overflow-wrap:anywhere; font-size:14px; line-height:1.6; }
+.receipt-edit-actions { margin-top:16px; }
+.confirmation-return { padding-top:12px; }
+@media(max-width:360px) {
+  .request-success { gap:10px; }
+  .request-success h2 { font-size:26px; }
+  .request-success-mark { width:48px; height:48px; }
+}
+
+/* Separate assignment and protective equipment from the requested-work amber. */
+.badge.assigned { color:var(--info-ink); background:var(--info-bg); }
+.ppe-chip.ppe-emphasis { color:#8c4650; background:#fdf0f2; border-color:#e7c8cd; }
